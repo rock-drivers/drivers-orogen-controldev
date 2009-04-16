@@ -1,0 +1,44 @@
+name "controldev"
+version "0.0"
+
+using_library "controldev"
+using_toolkit "dfki"
+
+toolkit do
+    load "ControlDevStruct.hpp"
+end
+
+task_context "GenericTask" do
+    needs_configuration
+
+    output_port("rawCommand", "controldev/RawCommand").
+        doc("Port for raw command structures (composed of joystick and sliderbox values)")
+
+    output_port("motionCommand", "controldev/MotionCommand").
+        doc("Port for motion command structures (translation, rotation)")
+end
+
+task_context "Local" do
+    subclasses "GenericTask"
+
+    fd_driven
+
+    property("joystick_device", "/std/string").
+        doc("Path to the joystick device")
+
+    property("sliderbox_device", "/std/string").
+        doc("Path to the sliderbox device")
+end
+
+task_context "Remote" do
+    subclasses "GenericTask"
+end
+
+static_deployment do
+    local = task("Local").realtime
+    remote = task("Remote").realtime
+
+    if !corba_enabled?
+        browse local
+    end
+end
