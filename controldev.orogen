@@ -5,7 +5,7 @@ using_library "controldev"
 using_toolkit "dfki"
 
 toolkit do
-    load "ControlDevStruct.hpp"
+    load "ControlDevTypes.hpp"
 end
 
 task_context "GenericTask" do
@@ -23,11 +23,8 @@ task_context "Local" do
 
     fd_driven
 
-    property("joystick_device", "/std/string").
+    property("joystick_device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
-
-    property("sliderbox_device", "/std/string").
-        doc("Path to the sliderbox device")
 end
 
 task_context "Remote" do
