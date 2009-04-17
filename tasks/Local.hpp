@@ -2,6 +2,8 @@
 #define CONTROLDEV_LOCAL_TASK_HPP
 
 #include "controldev/LocalBase.hpp"
+#include "Joystick.hpp"
+#include "SliderBox.hpp"
 
 #include <vector>
 
@@ -10,26 +12,19 @@ namespace controldev {
     {
 	friend class LocalBase;
     protected:
-    
-    
+        Joystick *joystick;
+        SliderBox *sliderBox;
 
     public:
         Local(std::string const& name = "controldev::Local", TaskCore::TaskState initial_state = Stopped);
+        virtual ~Local();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
          * component will stay in PreOperational. Otherwise, it goes into
          * Stopped.
-         *
-         * It is meaningful only if the #needs_configuration has been specified
-         * in the task context definition with (for example):
-         *
-         *   task_context "TaskName" do
-         *     needs_configuration
-         *     ...
-         *   end
          */
-        // bool configureHook();
+        bool configureHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to Running. If it returns false, then the component will
@@ -54,7 +49,9 @@ namespace controldev {
          * called before starting it again.
          *
          */
-        // void updateHook();
+        typedef std::vector<RTT::PortInterface *> PIV;
+
+        void updateHook();
         
 
         /** This hook is called by Orocos when the component is in the
