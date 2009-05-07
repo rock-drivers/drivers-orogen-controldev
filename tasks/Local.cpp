@@ -93,13 +93,18 @@ void Local::updateHook()
 
             cmd.joyButtonCount = buttonCount;
 
-            // Set button bit list
-            for (int j = 0; j < buttonCount; j++)
+        // "Only" up to 16 buttons are supported
+        int buttonCount = this->joystick->getNrButtons();
+        buttonCount = (buttonCount > 16 ? 16 : buttonCount);
+
+        rcmd.joyButtonCount = buttonCount;
+
+        // Set button bit list
+        for (int i = 0; i < buttonCount; i++)
+        {
+            if (this->joystick->getButtonPressed(i))
             {
-                if (this->joystick->getButtonPressed(j))
-                {
-                    cmd.joyButtons |= (1 << j);
-                }
+                rcmd.joyButtons |= (1 << i);
             }
         }
 
@@ -110,14 +115,16 @@ void Local::updateHook()
 
             cmd.devices |= DAI_SliderBox;
 
-            for (int j = 0; j < 7; i++)
-            {
-                cmd.sliderValues[i] = this->sliderBox->getValue(i);
-            }
+        for (int i = 0; i < 7; i++)
+        {
+            rcmd.sliderValues[i] = this->sliderBox->getValue(i);
+        }
 
-            for (int j = 0; j < 4; i++)
+        for (int i = 0; i < 4; i++)
+        {
+            if (this->sliderBox->getButtonOn(i))
             {
-                cmd.sliderButtons |= this->sliderBox->getButtonOn(i);
+                rcmd.sliderButtons |= (1 << i);
             }
         }
 
