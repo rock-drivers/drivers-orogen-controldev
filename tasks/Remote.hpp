@@ -14,7 +14,7 @@ namespace controldev {
     
 
     public:
-        Remote(std::string const& name = "controldev::Remote", TaskCore::TaskState initial_state = Stopped);
+        Remote(std::string const& name = "controldev::Remote");
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the

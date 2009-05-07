@@ -5,6 +5,8 @@
 #include "Joystick.hpp"
 #include "SliderBox.hpp"
 
+#include <rtt/FileDescriptorActivity.hpp>
+
 #include <vector>
 
 namespace controldev {
@@ -16,8 +18,10 @@ namespace controldev {
         SliderBox *sliderBox;
 
     public:
-        Local(std::string const& name = "controldev::Local", TaskCore::TaskState initial_state = Stopped);
+        Local(std::string const& name = "controldev::Local");
         virtual ~Local();
+
+        RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -49,8 +53,6 @@ namespace controldev {
          * called before starting it again.
          *
          */
-        typedef std::vector<RTT::PortInterface *> PIV;
-
         void updateHook();
         
 
@@ -77,8 +79,6 @@ namespace controldev {
         /** This method is called after the configuration step by the
          * FileDescriptorActivity to get the file descriptor
          */
-        std::vector<int> getFileDescriptors() const;
-        
 
 
     };

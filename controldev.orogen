@@ -9,8 +9,6 @@ toolkit do
 end
 
 task_context "GenericTask" do
-    needs_configuration
-
     output_port("rawCommand", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
 
@@ -22,6 +20,7 @@ task_context "Local" do
     subclasses "GenericTask"
 
     fd_driven
+    needs_configuration
 
     property("joystick_device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
@@ -29,6 +28,7 @@ end
 
 task_context "Remote" do
     subclasses "GenericTask"
+    needs_configuration
 end
 
 static_deployment do

@@ -2,8 +2,8 @@
 
 using namespace controldev;
 
-Local::Local(std::string const& name, TaskCore::TaskState initial_state) :
-    LocalBase(name, initial_state),
+Local::Local(std::string const& name) :
+    LocalBase(name),
     joystick(NULL), sliderBox(NULL)
 {}
 
@@ -16,15 +16,10 @@ Local::~Local()
     this->sliderBox = NULL;
 }
 
-
-/** This method is called after the configuration step by the
- * FileDescriptorActivity to get the file descriptor
- */
-std::vector<int> Local::getFileDescriptors() const
+RTT::FileDescriptorActivity* Local::getFileDescriptorActivity()
 {
-    return std::vector<int>();
+    return dynamic_cast< RTT::FileDescriptorActivity* >(getActivity().get());
 }
-
 
 /// The following lines are template definitions for the various state machine
 // hooks defined by Orocos::RTT. See Local.hpp for more detailed
@@ -32,6 +27,14 @@ std::vector<int> Local::getFileDescriptors() const
 
 bool Local::configureHook()
 {
+    RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
+
+    if (activity == NULL)
+    {
+        std::cerr << "Error: Unable to get fd activity, abotring!" << std::endl;
+        return false;
+    }
+
     std::string device = this->_joystick_device.value();
 
     // Try to connect the Joystick
@@ -44,6 +47,10 @@ bool Local::configureHook()
         delete this->joystick;
         this->joystick = NULL;
     }
+    else
+    {
+        activity->watch(this->joystick->getFileDescriptor());
+    }
 
     // Try to connect the SliderBox
     this->sliderBox = new SliderBox();
@@ -55,7 +62,11 @@ bool Local::configureHook()
         delete this->sliderBox;
         this->sliderBox = NULL;
     }
-    this->sliderBox->connectBox();
+    else
+    {
+        this->sliderBox->connectBox();
+        activity->watch(this->sliderBox->getFileDescriptor());
+    }
 
     // Abort if no control device was found
     if ((!this->joystick) && (!this->sliderBox))
@@ -74,18 +85,19 @@ void Local::updateHook()
 
     memset(&cmd, 0, sizeof(RawCommand));
 
-    for (size_t i = 0; i < this->__fd_count; i++)
-    {
-        // New data available at the Joystick device
-        if (this->__fds[i] == this->joystick->getFileDescriptor())
-        {
-            this->joystick->updateState();
+    RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
 
-            cmd.devices |= (int)DAI_Joystick;
-            cmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
-            cmd.joyUpDown = this->joystick->getAxis(Joystick::AXIS_Forward);
-            cmd.joySlide = this->joystick->getAxis(Joystick::AXIS_Pan);
-            cmd.joyThrottle = 0.0;
+    // New data available at the Joystick device
+    if (activity->isWatched(this->joystick->getFileDescriptor()))
+    {
+        this->joystick->updateState();
+
+        rcmd.devices |= (int)DAI_Joystick;
+
+        rcmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
+        rcmd.joyUpDown = this->joystick->getAxis(Joystick::AXIS_Forward);
+        rcmd.joySlide = this->joystick->getAxis(Joystick::AXIS_Pan);
+        rcmd.joyThrottle = 0.0;
 
             // "Only" up to 16 buttons are supported
             int buttonCount = this->joystick->getNrButtons();
@@ -107,13 +119,13 @@ void Local::updateHook()
                 rcmd.joyButtons |= (1 << i);
             }
         }
+    }
 
-        // New data available at the SliderBox device
-        else if (this->__fds[i] == this->sliderBox->getFileDescriptor())
-        {
-            this->sliderBox->pollNonBlocking();
+    if (activity->isWatched(this->sliderBox->getFileDescriptor()))
+    {
+        this->sliderBox->pollNonBlocking();
 
-            cmd.devices |= DAI_SliderBox;
+        rcmd.devices |= DAI_SliderBox;
 
         for (int i = 0; i < 7; i++)
         {
@@ -127,12 +139,10 @@ void Local::updateHook()
                 rcmd.sliderButtons |= (1 << i);
             }
         }
-
-        // Send command
-        this->_rawCommand.write(cmd);
-
-        // TODO: motion command not yet supported (phbaer)
     }
+
+    // Send raw command
+    this->_rawCommand.write(rcmd);
 }
 
 // void Local::errorHook() {}

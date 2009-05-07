@@ -2,8 +2,8 @@
 
 using namespace controldev;
 
-Remote::Remote(std::string const& name, TaskCore::TaskState initial_state)
-    : RemoteBase(name, initial_state) {}
+Remote::Remote(std::string const& name)
+    : RemoteBase(name) {}
 
 
 
