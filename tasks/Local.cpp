@@ -81,9 +81,11 @@ bool Local::configureHook()
 
 void Local::updateHook()
 {
-    RawCommand cmd;
+    MotionCommand mcmd;
+    memset(&mcmd, 0, sizeof(MotionCommand));
 
-    memset(&cmd, 0, sizeof(RawCommand));
+    RawCommand rcmd;
+    memset(&rcmd, 0, sizeof(RawCommand));
 
     RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
 
@@ -99,11 +101,16 @@ void Local::updateHook()
         rcmd.joySlide = this->joystick->getAxis(Joystick::AXIS_Pan);
         rcmd.joyThrottle = 0.0;
 
-            // "Only" up to 16 buttons are supported
-            int buttonCount = this->joystick->getNrButtons();
-            buttonCount = (buttonCount > 16 ? 16 : buttonCount);
+        // Simple transformation of joystick movement to
+        // motion commands (translation, rotation)
+        double x = (double)rcmd.joyUpDown;
+        double y = (double)rcmd.joyLeftRight;
 
-            cmd.joyButtonCount = buttonCount;
+        mcmd.rotation = atan2(y, x);
+        mcmd.translation = ((x != 0 || y != 0) ? sqrt(x * x + y * y) : 0);
+
+        // Send motion command
+        this->_motionCommand.write(mcmd);
 
         // "Only" up to 16 buttons are supported
         int buttonCount = this->joystick->getNrButtons();
