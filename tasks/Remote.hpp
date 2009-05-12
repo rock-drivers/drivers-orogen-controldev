@@ -29,7 +29,7 @@ namespace controldev {
          *     ...
          *   end
          */
-        // bool configureHook();
+        bool configureHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to Running. If it returns false, then the component will
@@ -54,8 +54,8 @@ namespace controldev {
          * called before starting it again.
          *
          */
-        // void updateHook();
-        
+//        void updateHook();
+        void updateHook(std::vector<RTT::PortInterface*> const& updated_ports);
 
         /** This hook is called by Orocos when the component is in the
          * RunTimeError state, at each activity step. See the discussion in

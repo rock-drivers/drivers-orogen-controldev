@@ -2,7 +2,9 @@ name "controldev"
 version "0.0"
 
 using_library "controldev"
+#using_library "canbus"
 using_toolkit "dfki"
+using_toolkit "can"
 
 toolkit do
     load "ControlDevTypes.hpp"
@@ -28,7 +30,15 @@ end
 
 task_context "Remote" do
     subclasses "GenericTask"
+
     needs_configuration
+
+    input_port("canJoystick", "can/Message").
+        doc("Input port for joystick messages from the CAN dispatcher module")
+
+    input_port("canSliderBox", "can/Message").
+        doc("Input port for slider box messages from the CAN dispatcher module")
+
 end
 
 static_deployment do
