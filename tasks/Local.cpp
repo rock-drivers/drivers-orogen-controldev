@@ -97,13 +97,13 @@ void Local::updateHook()
         rcmd.devices |= (int)DAI_Joystick;
 
         rcmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
-        rcmd.joyUpDown = this->joystick->getAxis(Joystick::AXIS_Forward);
-        rcmd.joySlide = this->joystick->getAxis(Joystick::AXIS_Pan);
+        rcmd.joyFwdBack = this->joystick->getAxis(Joystick::AXIS_Forward);
+        rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Pan);
         rcmd.joyThrottle = 0.0;
 
         // Simple transformation of joystick movement to
         // motion commands (translation, rotation)
-        double x = (double)rcmd.joyUpDown;
+        double x = (double)rcmd.joyFwdBack;
         double y = (double)rcmd.joyLeftRight;
 
         mcmd.rotation = atan2(y, x);

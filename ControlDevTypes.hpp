@@ -19,15 +19,15 @@ namespace controldev
     {
         int devices;
 
-        short joyLeftRight;             // The Linux API returns 16bit values
-        short joyUpDown;                // The Linux API returns 16bit values
-        short joySlide;                 // not applicable for ASGuard
-        unsigned short joyThrottle;     // Throttle values are positive
+        float joyLeftRight; // Left/right axis in [-1; 1]. Right is positive.
+        float joyFwdBack;   // Forward/backward axis in [-1; 1]. Forward is positive.
+        float joyRotation;  // Rotation axis in [-1; 1]; Clockwise is positive.
+        float joyThrottle;  // Throttle values in [0, 1]. Zero is fully pushed.
         unsigned short joyButtonCount;  // Number of buttons
-        unsigned short joyButtons;      // 16 buttons should be enough
+        unsigned short joyButtons;      // Bitmask showing pressed buttons
 
-        unsigned short sliderValues[7]; // The slider box has seven slider values
-        unsigned char sliderButtons;    // The slider box has four buttons
+        float sliderValues[7]; // The slider box has seven slider values
+        unsigned short sliderButtons;    // The slider box has four buttons
     };
 
     /** A unified motion control data structure for differential drive-based

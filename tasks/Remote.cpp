@@ -28,17 +28,29 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
     for (std::vector<RTT::PortInterface *>::const_iterator itr = updated_ports.begin();
          itr != updated_ports.end(); itr++)
     {
-        if (this->_canJoystick.isSameID(*(*itr)->getPortID()))
+        if (&_canJoystick == *itr)
         {
+            rcmd.devices |= DAI_Joystick;
+
             can::Message msg;
             this->_canJoystick.read(msg);
 
+            rcmd.joyLeftRight   = ((char)msg.data[0]) / 127.0;
+            rcmd.joyFwdBack     = ((char)msg.data[1]) / 127.0;
+            rcmd.joyRotation    = ((char)msg.data[2]) / 127.0;
+            rcmd.joyThrottle    = -((char)msg.data[3]) / 127.0;
+            rcmd.joyButtonCount = 16;
+            rcmd.joyButtons     = msg.data[6];
+
             // [ticks/ms]
-            double x = ((double)((char)msg.data[0]) / 127.0) * hbridge::TICKS_PER_TURN / 1000.0;
-            double y = ((double)((char)msg.data[1]) / 127.0) * hbridge::TICKS_PER_TURN / 1000.0;
+            float max_speed = _maxSpeed.get();
+            float min_speed = _minSpeed.get();
+            float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+            double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
+            double y = rcmd.joyLeftRight * 23328 / 1000.0;
             
-            mcmd.rotation = atan2(y, x);
-            mcmd.translation = ((x != 0 || y != 0) ? sqrt(x * x + y * y) : 0);
+            mcmd.rotation    = atan2(y, fabs(x));
+            mcmd.translation = x;
 
             // Send motion command
             this->_motionCommand.write(mcmd);
@@ -47,7 +59,6 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 //            int buttonCount = this->joystick->getNrButtons();
 //            buttonCount = (buttonCount > 16 ? 16 : buttonCount);
 
-//            rcmd.joyButtonCount = buttonCount;
 
             // Set button bit list
 //            for (int i = 0; i < buttonCount; i++)
@@ -59,7 +70,7 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 //            }
 
         }
-        else if (this->_canSliderBox.isSameID(*(*itr)->getPortID()))
+        else if (&_canSliderBox == *itr)
         {
             can::Message msg;
             this->_canSliderBox.read(msg);
@@ -79,10 +90,10 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 //                }
 //            }
         }
-
-        // Send raw command
-//        this->_rawCommand.write(rcmd);
     }
+
+    // Send raw command
+    _rawCommand.write(rcmd);
 }
 
 

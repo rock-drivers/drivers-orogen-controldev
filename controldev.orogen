@@ -11,6 +11,9 @@ toolkit do
 end
 
 task_context "GenericTask" do
+    property "minSpeed", "float"
+    property "maxSpeed", "float"
+
     output_port("rawCommand", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
 
