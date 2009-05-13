@@ -38,7 +38,7 @@ task_context "Remote" do
 
     input_port("canSliderBox", "can/Message").
         doc("Input port for slider box messages from the CAN dispatcher module")
-
+    port_driven 'canJoystick', 'canSliderBox'
 end
 
 static_deployment do
