@@ -4,7 +4,12 @@ using namespace controldev;
 
 Remote::Remote(std::string const& name) :
     RemoteBase(name)
-{}
+{
+    // Set max/min speed to respectively 0.5 m/s and 0.1 m/s
+    _maxSpeed.set(0.5);
+    _minSpeed.set(0.1);
+    _maxRotationSpeed.set(M_PI);
+}
 
 /// The following lines are template definitions for the various state machine
 // hooks defined by Orocos::RTT. See Remote.hpp for more detailed
@@ -46,10 +51,11 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
             float max_speed = _maxSpeed.get();
             float min_speed = _minSpeed.get();
             float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+            float max_rotation_speed = _maxRotationSpeed.get();
             double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
-            double y = rcmd.joyLeftRight * 23328 / 1000.0;
+            double y = rcmd.joyLeftRight;
             
-            mcmd.rotation    = atan2(y, fabs(x));
+            mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
             mcmd.translation = x;
 
             // Send motion command

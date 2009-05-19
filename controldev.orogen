@@ -11,8 +11,12 @@ toolkit do
 end
 
 task_context "GenericTask" do
+    # Minimum translation speed in m/s
     property "minSpeed", "float"
+    # Maximum translation speed in m/s
     property "maxSpeed", "float"
+    # Maximum rotation speed in rad/s
+    property "maxRotationSpeed", "float"
 
     output_port("rawCommand", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
