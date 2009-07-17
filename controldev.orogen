@@ -52,6 +52,7 @@ static_deployment do
     local = task("Local").realtime
     remote = task("Remote").realtime
 
+    add_default_logger
     if !corba_enabled?
         browse local
     end
