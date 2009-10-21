@@ -81,20 +81,14 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
             can::Message msg;
             this->_canSliderBox.read(msg);
 
-//            rcmd.devices |= DAI_SliderBox;
+            rcmd.devices |= DAI_SliderBox;
 
-//            for (int i = 0; i < 7; i++)
-//            {
-//                rcmd.sliderValues[i] = this->sliderBox->getValue(i);
-//            }
+            for (int i = 0; i < 7; i++)
+            {
+                rcmd.sliderValues[i] = msg.data[i];
+            }
 
-//            for (int i = 0; i < 4; i++)
-//            {
-//                if (this->sliderBox->getButtonOn(i))
-//                {
-//                    rcmd.sliderButtons |= (1 << i);
-//                }
-//            }
+	    rcmd.sliderButtons |= msg.data[7];
         }
     }
 
