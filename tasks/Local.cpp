@@ -90,7 +90,7 @@ void Local::updateHook()
     RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
 
     // New data available at the Joystick device
-    if (activity->isWatched(this->joystick->getFileDescriptor()))
+    if (joystick && activity->isWatched(this->joystick->getFileDescriptor()))
     {
         this->joystick->updateState();
 
@@ -128,7 +128,7 @@ void Local::updateHook()
         }
     }
 
-    if (activity->isWatched(this->sliderBox->getFileDescriptor()))
+    if (sliderBox && activity->isWatched(this->sliderBox->getFileDescriptor()))
     {
         this->sliderBox->pollNonBlocking();
 
