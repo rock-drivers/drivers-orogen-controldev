@@ -47,9 +47,9 @@ task_context "Remote" do
     port_driven 'canJoystick', 'canSliderBox'
 end
 
-static_deployment do
-    local = task("Local").realtime
-    remote = task("Remote").realtime
+deployment "test" do
+    local = task("local", "Local").realtime
+    remote = task("remote", "Remote").realtime
 
     add_default_logger
     if !corba_enabled?
