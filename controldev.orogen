@@ -10,6 +10,8 @@ toolkit do
 end
 
 task_context "GenericTask" do
+    abstract
+
     # Minimum translation speed in m/s
     property "minSpeed", "double"
     # Maximum translation speed in m/s
