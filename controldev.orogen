@@ -47,7 +47,8 @@ task_context "Remote" do
     port_driven 'canJoystick', 'canSliderBox'
 end
 
-deployment "test" do
+deployment "test_controldev" do
+    do_not_install
     local = task("local", "Local").realtime
     remote = task("remote", "Remote").realtime
 
