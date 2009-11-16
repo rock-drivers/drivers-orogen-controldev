@@ -92,7 +92,7 @@ void Local::updateHook()
     // New data available at the Joystick device
     if (joystick && activity->isWatched(this->joystick->getFileDescriptor()))
     {
-        this->joystick->updateState();
+        while(this->joystick->updateState());
 
         rcmd.devices |= (int)DAI_Joystick;
 
@@ -130,7 +130,8 @@ void Local::updateHook()
 
     if (sliderBox && activity->isWatched(this->sliderBox->getFileDescriptor()))
     {
-        this->sliderBox->pollNonBlocking();
+	bool updated = false;
+        while(this->sliderBox->pollNonBlocking(updated));
 
         rcmd.devices |= DAI_SliderBox;
 
