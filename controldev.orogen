@@ -5,9 +5,7 @@ using_library "controldev"
 using_toolkit "dfki"
 using_toolkit "can"
 
-toolkit do
-    load "ControlDevTypes.hpp"
-end
+import_types_from "ControlDevTypes.hpp"
 
 task_context "GenericTask" do
     abstract
@@ -21,6 +19,9 @@ task_context "GenericTask" do
 
     output_port("rawCommand", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
+
+	output_port("fourWheelCommand", "controldev/FourWheelCommand").
+		doc("command that specifies the speed for the four wheels")
 
     output_port("motionCommand", "controldev/MotionCommand").
         doc("Port for motion command structures (translation, rotation)")

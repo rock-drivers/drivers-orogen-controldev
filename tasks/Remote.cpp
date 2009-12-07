@@ -88,7 +88,11 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
                 rcmd.sliderValues[i] = msg.data[i];
             }
 
-	    rcmd.sliderButtons |= msg.data[7];
+			rcmd.sliderButtons |= msg.data[7];
+
+			FourWheelCommand wheel_command;
+			if (mapFromSliderbox(wheel_command, rcmd))
+				_fourWheelCommand.write(wheel_command);
         }
     }
 
