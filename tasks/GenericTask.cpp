@@ -43,7 +43,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 	}
 
 	/* ON state */	
-	if ( input.sliderButtons & (1 << 3) )/* Button 4 */
+	if (! (input.sliderButtons & (1 << 3)) )/* Button 4 */
 	{
 		cmd = FourWheelCommand();
 		return true;
