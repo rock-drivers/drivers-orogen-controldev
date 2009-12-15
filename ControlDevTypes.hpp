@@ -51,6 +51,7 @@ namespace controldev
     {
         FOUR_WHEEL_MODE mode[4];
         double target[4]; //! speeds in radians/s when in MODE_SPEED, [0, 1] when in MODE_PWM
+	bool sync;        // Synchronize wheels
 
 #ifndef __orogen
         FourWheelCommand()
@@ -60,6 +61,7 @@ namespace controldev
                 mode[i] = MODE_PWM;
                 target[i] = 0;
             }
+	    sync = false;
         }
 #endif
     };

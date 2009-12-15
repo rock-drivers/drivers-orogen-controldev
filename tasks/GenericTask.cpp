@@ -42,7 +42,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 			sliderValues[i] = 0.0;
 	}
 
-	/* ON state */	
+	/* OFF state */	
 	if (! (input.sliderButtons & (1 << 3)) )/* Button 4 */
 	{
 		cmd = FourWheelCommand();
@@ -126,6 +126,13 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 				* vel_max;
 		}
 	}
+
+
+	if (input.sliderButtons & (1 << 0))   /* Button 1 */
+	    cmd.sync = true;
+	else 
+	    cmd.sync = false;
+
 
 	return true;
 }
