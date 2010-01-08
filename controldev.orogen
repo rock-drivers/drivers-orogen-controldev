@@ -2,7 +2,6 @@ name "controldev"
 version "0.0"
 
 using_library "controldev"
-using_toolkit "dfki"
 using_toolkit "can"
 
 import_types_from "ControlDevTypes.hpp"
