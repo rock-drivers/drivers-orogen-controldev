@@ -110,7 +110,7 @@ void Local::updateHook()
         mcmd.translation = ((x != 0 || y != 0) ? sqrt(x * x + y * y) : 0);
 
         // Send motion command
-        this->_motionCommand.write(mcmd);
+        this->_motion_command.write(mcmd);
 
         // "Only" up to 16 buttons are supported
         int buttonCount = this->joystick->getNrButtons();
@@ -150,7 +150,7 @@ void Local::updateHook()
     }
 
     // Send raw command
-    this->_rawCommand.write(rcmd);
+    this->_raw_command.write(rcmd);
 }
 
 // void Local::errorHook() {}

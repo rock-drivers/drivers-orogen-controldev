@@ -59,7 +59,7 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
             mcmd.translation = x;
 
             // Send motion command
-            this->_motionCommand.write(mcmd);
+            this->_motion_command.write(mcmd);
 
             // "Only" up to 16 buttons are supported
 //            int buttonCount = this->joystick->getNrButtons();
@@ -92,12 +92,12 @@ void Remote::updateHook(std::vector<RTT::PortInterface*> const& updated_ports)
 
 			FourWheelCommand wheel_command;
 			if (mapFromSliderbox(wheel_command, rcmd))
-				_fourWheelCommand.write(wheel_command);
+				_four_wheel_command.write(wheel_command);
         }
     }
 
     // Send raw command
-    _rawCommand.write(rcmd);
+    _raw_command.write(rcmd);
 }
 
 

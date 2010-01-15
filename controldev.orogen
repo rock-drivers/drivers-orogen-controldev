@@ -16,13 +16,13 @@ task_context "GenericTask" do
     # Maximum rotation speed in rad/s
     property "maxRotationSpeed", "double"
 
-    output_port("rawCommand", "controldev/RawCommand").
+    output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
 
-	output_port("fourWheelCommand", "controldev/FourWheelCommand").
-		doc("command that specifies the speed for the four wheels")
+    output_port("four_wheel_command", "controldev/FourWheelCommand").
+        doc("command that specifies the speed for the four wheels")
 
-    output_port("motionCommand", "controldev/MotionCommand").
+    output_port("motion_command", "controldev/MotionCommand").
         doc("Port for motion command structures (translation, rotation)")
 end
 
