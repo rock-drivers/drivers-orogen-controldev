@@ -3,8 +3,10 @@ version "0.0"
 
 using_library "controldev"
 using_toolkit "can"
+using_library "base-types"
 
 import_types_from "ControlDevTypes.hpp"
+import_types_from "base/motion_command.h"
 
 task_context "GenericTask" do
     abstract
@@ -22,7 +24,7 @@ task_context "GenericTask" do
     output_port("four_wheel_command", "controldev/FourWheelCommand").
         doc("command that specifies the speed for the four wheels")
 
-    output_port("motion_command", "controldev/MotionCommand").
+    output_port("motion_command", "base/MotionCommand2D").
         doc("Port for motion command structures (translation, rotation)")
 end
 

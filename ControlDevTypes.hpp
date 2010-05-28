@@ -30,18 +30,6 @@ namespace controldev
         unsigned short sliderButtons;    // The slider box has four buttons
     };
 
-    /** A unified motion control data structure for differential drive-based
-     *  robots.
-     */
-    struct MotionCommand
-    {
-        double translation; //! translation value in m/s
-        double rotation;    //! rotation value in rad/s. Positive is counter-clockwise
-        // That's actually enough information for a differential drive,
-        // for an omnidirectional drive we would add a heading/angle
-        // value.
-    };
-
     enum FOUR_WHEEL_MODE {
         MODE_PWM, MODE_SPEED
     };

@@ -81,8 +81,8 @@ bool Local::configureHook()
 
 void Local::updateHook()
 {
-    MotionCommand mcmd;
-    memset(&mcmd, 0, sizeof(MotionCommand));
+    base::MotionCommand2D mcmd;
+    memset(&mcmd, 0, sizeof(base::MotionCommand2D));
 
     RawCommand rcmd;
     memset(&rcmd, 0, sizeof(RawCommand));
