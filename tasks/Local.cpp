@@ -5,7 +5,11 @@ using namespace controldev;
 Local::Local(std::string const& name) :
     LocalBase(name),
     joystick(NULL), sliderBox(NULL)
-{}
+{
+    _maxSpeed.set(1.5);
+    _minSpeed.set(0.1);
+    _maxRotationSpeed.set(M_PI);
+}
 
 Local::~Local()
 {
@@ -99,16 +103,26 @@ void Local::updateHook()
         rcmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
         rcmd.joyFwdBack = this->joystick->getAxis(Joystick::AXIS_Forward);
         rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Pan);
-        rcmd.joyThrottle = 0.0;
+        rcmd.joyThrottle = this->joystick->getAxis(Joystick::AXIS_Slider);
 
         // Simple transformation of joystick movement to
         // motion commands (translation, rotation)
-        double x = (double)rcmd.joyFwdBack;
-        double y = (double)rcmd.joyLeftRight;
+//         double x = (double)rcmd.joyFwdBack;
+//         double y = (double)rcmd.joyLeftRight;
+// 
+//         mcmd.rotation = atan2(y, x);
+//         mcmd.translation = ((x != 0 || y != 0) ? sqrt(x * x + y * y) : 0);
 
-        mcmd.rotation = atan2(y, x);
-        mcmd.translation = ((x != 0 || y != 0) ? sqrt(x * x + y * y) : 0);
-
+	float max_speed = _maxSpeed.get();
+	float min_speed = _minSpeed.get();
+	float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+	float max_rotation_speed = _maxRotationSpeed.get();
+	double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
+	double y = rcmd.joyLeftRight;
+	
+	mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
+	mcmd.translation = x;
+	
         // Send motion command
         this->_motion_command.write(mcmd);
 
