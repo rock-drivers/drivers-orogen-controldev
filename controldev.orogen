@@ -2,11 +2,10 @@ name "controldev"
 version "0.0"
 
 using_library "controldev"
-using_toolkit "can"
-using_library "base-types"
 
+import_types_from "can"
+import_types_from "base"
 import_types_from "ControlDevTypes.hpp"
-import_types_from "base/motion_command.h"
 
 task_context "GenericTask" do
     abstract
