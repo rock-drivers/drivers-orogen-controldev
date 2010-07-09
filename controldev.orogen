@@ -50,6 +50,14 @@ task_context "Remote" do
     port_driven 'canJoystick', 'canSliderBox'
 end
 
+deployment "joystick_local" do
+    task('joystick_local', 'controldev::Local').
+       realtime.
+       priority(25)
+
+    add_default_logger
+end
+
 deployment "test_controldev" do
     do_not_install
     local = task("local", "Local").realtime
