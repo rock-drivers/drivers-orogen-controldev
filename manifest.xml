@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <package>
   <depend package="drivers/controldev"/>
-  <depend package="modules/canbus"/>
   <depend package="orocos/logger"/>
   <depend package="orocos/orogen"/>
   <depend package="orocos/rtt"/>

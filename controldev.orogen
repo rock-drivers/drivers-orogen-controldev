@@ -3,7 +3,6 @@ version "0.0"
 
 using_library "controldev"
 
-import_types_from "can"
 import_types_from "base"
 import_types_from "ControlDevTypes.hpp"
 
@@ -37,6 +36,8 @@ task_context "Local" do
         doc("Path to the joystick device")
 end
 
+if has_typekit?('can')
+import_types_from "can"
 task_context "Remote" do
     subclasses "GenericTask"
 
@@ -48,6 +49,9 @@ task_context "Remote" do
     input_port("canSliderBox", "can/Message").
         doc("Input port for slider box messages from the CAN dispatcher module")
     port_driven 'canJoystick', 'canSliderBox'
+end
+else
+    STDERR.puts "WARN: the Remote task will be disabled as CAN is not present"
 end
 
 deployment "joystick_local" do
