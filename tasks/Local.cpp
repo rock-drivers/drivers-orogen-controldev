@@ -1,5 +1,7 @@
 #include "Local.hpp"
 
+#include <rtt/extras/FileDescriptorActivity.hpp>
+
 using namespace controldev;
 
 Local::Local(std::string const& name) :
@@ -20,18 +22,14 @@ Local::~Local()
     this->sliderBox = NULL;
 }
 
-RTT::FileDescriptorActivity* Local::getFileDescriptorActivity()
-{
-    return dynamic_cast< RTT::FileDescriptorActivity* >(getActivity().get());
-}
-
 /// The following lines are template definitions for the various state machine
 // hooks defined by Orocos::RTT. See Local.hpp for more detailed
 // documentation about them.
 
 bool Local::configureHook()
 {
-    RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
+    RTT::extras::FileDescriptorActivity* activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
 
     if (activity == NULL)
     {
@@ -91,7 +89,8 @@ void Local::updateHook()
     RawCommand rcmd;
     memset(&rcmd, 0, sizeof(RawCommand));
 
-    RTT::FileDescriptorActivity *activity = getFileDescriptorActivity();
+    RTT::extras::FileDescriptorActivity* activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
 
     // New data available at the Joystick device
     if (joystick && activity->isWatched(this->joystick->getFileDescriptor()))

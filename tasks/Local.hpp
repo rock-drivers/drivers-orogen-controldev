@@ -5,8 +5,6 @@
 #include "Joystick.hpp"
 #include "SliderBox.hpp"
 
-#include <rtt/FileDescriptorActivity.hpp>
-
 #include <vector>
 
 namespace controldev {
@@ -20,8 +18,6 @@ namespace controldev {
     public:
         Local(std::string const& name = "controldev::Local");
         virtual ~Local();
-
-        RTT::FileDescriptorActivity* getFileDescriptorActivity();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the

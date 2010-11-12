@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <depend package="drivers/controldev"/>
-  <depend package="logger"/>
+  <depend package="modules/logger"/>
+  <depend package="modules/base"/>
   <depend package="orogen"/>
 </package>

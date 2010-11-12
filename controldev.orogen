@@ -48,7 +48,8 @@ task_context "Remote" do
 
     input_port("canSliderBox", "can/Message").
         doc("Input port for slider box messages from the CAN dispatcher module")
-    port_driven 'canJoystick', 'canSliderBox'
+
+    port_driven
 end
 else
     STDERR.puts "WARN: the Remote task will be disabled as CAN is not present"
