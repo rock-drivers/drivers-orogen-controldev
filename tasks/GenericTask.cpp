@@ -58,13 +58,13 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 		if (input.sliderButtons & (1 << 2))  /* Button 3 */
 		{
 			/* PWM Mode */
-			cmd.mode[i] = controldev::MODE_PWM;
+			cmd.mode[i] = base::actuators::DM_PWM;
 			vel_max = VEL_MAX_PWM;
 		}
 		else
 		{
 			/* PID Mode */
-			cmd.mode[i] = controldev::MODE_SPEED;
+			cmd.mode[i] = base::actuators::DM_SPEED;
 			vel_max = VEL_MAX_PID;
 		}
 	}

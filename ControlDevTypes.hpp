@@ -1,6 +1,8 @@
 #ifndef CONTROLDEVTYPES_HPP
 #define CONTROLDEVTYPES_HPP
 
+#include <base/actuators/commands.h>
+
 namespace controldev
 {
 
@@ -30,14 +32,10 @@ namespace controldev
         unsigned short sliderButtons;    // The slider box has four buttons
     };
 
-    enum FOUR_WHEEL_MODE {
-        MODE_PWM, MODE_SPEED
-    };
-
     /** Data structure to send separate commands for each motor */
     struct FourWheelCommand
     {
-        FOUR_WHEEL_MODE mode[4];
+        base::actuators::DRIVE_MODE mode[4];
         double target[4]; //! speeds in radians/s when in MODE_SPEED, [0, 1] when in MODE_PWM
 	bool sync;        // Synchronize wheels
 
@@ -46,7 +44,7 @@ namespace controldev
         {
             for (int i = 0; i < 4; ++i)
             {
-                mode[i] = MODE_PWM;
+                mode[i] = base::actuators::DM_PWM;
                 target[i] = 0;
             }
 	    sync = false;
