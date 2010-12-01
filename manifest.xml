@@ -11,6 +11,7 @@
   </copyright>
 
   <depend package="drivers/controldev"/>
+  <depend package="drivers/orogen/canbus" optional="1"/>
   <depend package="base/orogen/types"/>
   <depend package="tools/logger"/>
   <depend package="orogen"/>
