@@ -29,13 +29,13 @@ void Remote::updateHook()
     RawCommand rcmd;
     memset(&rcmd, 0, sizeof(RawCommand));
 
-    can::Message msg;
+    canbus::Message msg;
 
     while (_canJoystick.read(msg) == RTT::NewData)
     {
         rcmd.devices |= DAI_Joystick;
 
-        can::Message msg;
+        canbus::Message msg;
         this->_canJoystick.read(msg);
 
         rcmd.joyLeftRight   = ((char)msg.data[0]) / 127.0;

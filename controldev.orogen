@@ -36,23 +36,23 @@ task_context "Local" do
         doc("Path to the joystick device")
 end
 
-if has_typekit?('can')
-import_types_from "can"
+if has_typekit?('canbus')
+import_types_from "canbus"
 task_context "Remote" do
     subclasses "GenericTask"
 
     needs_configuration
 
-    input_port("canJoystick", "can/Message").
+    input_port("canJoystick", "canbus/Message").
         doc("Input port for joystick messages from the CAN dispatcher module")
 
-    input_port("canSliderBox", "can/Message").
+    input_port("canSliderBox", "canbus/Message").
         doc("Input port for slider box messages from the CAN dispatcher module")
 
     port_driven
 end
 else
-    STDERR.puts "WARN: the Remote task will be disabled as CAN is not present"
+    STDERR.puts "WARN: the Remote task will be disabled as the canbus orogen component is not present"
 end
 
 deployment "joystick_local" do
@@ -65,7 +65,7 @@ end
 
 deployment "test_controldev" do
     do_not_install
-    local = task("local", "Local").realtime
+    local  = task("local", "Local").realtime
     remote = task("remote", "Remote").realtime
 
     add_default_logger
