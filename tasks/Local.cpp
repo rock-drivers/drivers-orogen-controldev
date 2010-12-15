@@ -49,10 +49,6 @@ bool Local::configureHook()
         delete this->joystick;
         this->joystick = NULL;
     }
-    else
-    {
-        activity->watch(this->joystick->getFileDescriptor());
-    }
 
     // Try to connect the SliderBox
     this->sliderBox = new SliderBox();
@@ -65,10 +61,7 @@ bool Local::configureHook()
         this->sliderBox = NULL;
     }
     else
-    {
         this->sliderBox->connectBox();
-        activity->watch(this->sliderBox->getFileDescriptor());
-    }
 
     // Abort if no control device was found
     if ((!this->joystick) && (!this->sliderBox))
@@ -79,7 +72,22 @@ bool Local::configureHook()
 
     return true;
 }
-// bool Local::startHook() { return true; }
+
+bool Local::startHook()
+{
+    if (! LocalBase::startHook())
+        return false;
+
+    RTT::extras::FileDescriptorActivity* activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    if (this->sliderBox)
+        activity->watch(this->sliderBox->getFileDescriptor());
+    if (this->joystick)
+        activity->watch(this->joystick->getFileDescriptor());
+
+    return true;
+}
+
 
 void Local::updateHook()
 {
@@ -93,7 +101,7 @@ void Local::updateHook()
         getActivity<RTT::extras::FileDescriptorActivity>();
 
     // New data available at the Joystick device
-    if (joystick && activity->isWatched(this->joystick->getFileDescriptor()))
+    if (joystick && activity->isUpdated(this->joystick->getFileDescriptor()))
     {
         while(this->joystick->updateState());
 
@@ -141,7 +149,7 @@ void Local::updateHook()
         }
     }
 
-    if (sliderBox && activity->isWatched(this->sliderBox->getFileDescriptor()))
+    if (sliderBox && activity->isUpdated(this->sliderBox->getFileDescriptor()))
     {
 	bool updated = false;
         while(this->sliderBox->pollNonBlocking(updated));
@@ -167,6 +175,13 @@ void Local::updateHook()
 }
 
 // void Local::errorHook() {}
-// void Local::stopHook() {}
+void Local::stopHook()
+{
+    RTT::extras::FileDescriptorActivity* activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    activity->clearAllWatches();
+
+    LocalBase::stopHook();
+}
 // void Local::cleanupHook() {}
 
