@@ -24,6 +24,10 @@ task_context "GenericTask" do
 
     output_port("motion_command", "base/MotionCommand2D").
         doc("Port for motion command structures (translation, rotation)")
+
+    output_port("speed_command", "base/SpeedCommand6D").
+        doc("Port for 6-dof speed command structures (surge, sway, heave - roll, pitch, yaw)")
+
 end
 
 task_context "Local" do
