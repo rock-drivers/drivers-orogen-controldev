@@ -97,6 +97,9 @@ void Local::updateHook()
     RawCommand rcmd;
     memset(&rcmd, 0, sizeof(RawCommand));
 
+    base::SpeedCommand6D scmd;
+    memset(&scmd, 0, sizeof(base::SpeedCommand6D));
+
     RTT::extras::FileDescriptorActivity* activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
 
@@ -109,8 +112,19 @@ void Local::updateHook()
 
         rcmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
         rcmd.joyFwdBack = this->joystick->getAxis(Joystick::AXIS_Forward);
-        rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Pan);
+        rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Turn); // was Pan for iMoby, has to be Turn for cuslam
         rcmd.joyThrottle = this->joystick->getAxis(Joystick::AXIS_Slider);
+
+
+        scmd.surge = rcmd.joyFwdBack;
+	scmd.sway = rcmd.joyLeftRight;
+	scmd.heave = rcmd.joyThrottle;
+
+	scmd.roll = 0;
+	scmd.pitch = 0;
+	scmd.yaw = rcmd.joyRotation;
+
+	this->_speed_command.write(scmd);
 
         // Simple transformation of joystick movement to
         // motion commands (translation, rotation)
