@@ -5,6 +5,15 @@ using namespace controldev;
 GenericTask::GenericTask(std::string const& name, TaskCore::TaskState initial_state)
     : GenericTaskBase(name, initial_state) {}
 
+GenericTask::GenericTask(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state)
+    : GenericTaskBase(name, engine, initial_state)
+{
+}
+
+GenericTask::~GenericTask()
+{
+}
+
 
 
 #define	SLIDER_MAX 250			/*   */
