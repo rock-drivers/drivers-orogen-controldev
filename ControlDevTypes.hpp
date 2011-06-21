@@ -37,6 +37,7 @@ namespace controldev
     {
         base::actuators::DRIVE_MODE mode[4];
         double target[4]; //! speeds in radians/s when in MODE_SPEED, [0, 1] when in MODE_PWM
+        double offsets[4]; //! offsets [-1, 1] where 0 is the double_stance and +/-1 vertical stance
 	bool sync;        // Synchronize wheels
 
 #ifndef __orogen
