@@ -33,7 +33,7 @@ end
 task_context "Local" do
     subclasses "GenericTask"
 
-    required_activity :fd_driven
+    default_activity :fd_driven
     needs_configuration
 
     property("joystick_device", "/std/string", "/dev/input/js0").

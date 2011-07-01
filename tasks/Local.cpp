@@ -28,15 +28,6 @@ Local::~Local()
 
 bool Local::configureHook()
 {
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-
-    if (activity == NULL)
-    {
-        std::cerr << "Error: Unable to get fd activity, abotring!" << std::endl;
-        return false;
-    }
-
     std::string device = this->_joystick_device.value();
 
     // Try to connect the Joystick
@@ -80,10 +71,13 @@ bool Local::startHook()
 
     RTT::extras::FileDescriptorActivity* activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
-    if (this->sliderBox)
-        activity->watch(this->sliderBox->getFileDescriptor());
-    if (this->joystick)
-        activity->watch(this->joystick->getFileDescriptor());
+    if (activity)
+    {
+        if (this->sliderBox)
+            activity->watch(this->sliderBox->getFileDescriptor());
+        if (this->joystick)
+            activity->watch(this->joystick->getFileDescriptor());
+    }
 
     return true;
 }
@@ -104,7 +98,7 @@ void Local::updateHook()
         getActivity<RTT::extras::FileDescriptorActivity>();
 
     // New data available at the Joystick device
-    if (joystick && activity->isUpdated(this->joystick->getFileDescriptor()))
+    if (joystick && (!activity || activity->isUpdated(this->joystick->getFileDescriptor())))
     {
         while(this->joystick->updateState());
 
@@ -163,7 +157,7 @@ void Local::updateHook()
         }
     }
 
-    if (sliderBox && activity->isUpdated(this->sliderBox->getFileDescriptor()))
+    if (sliderBox && (!activity || activity->isUpdated(this->sliderBox->getFileDescriptor())))
     {
 	bool updated = false;
         while(this->sliderBox->pollNonBlocking(updated));
