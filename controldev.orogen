@@ -40,6 +40,13 @@ task_context "Local" do
         doc("Path to the joystick device")
 end
 
+task_context "SteeringWheel" do
+     subclasses "GenericTask"
+    
+     default_activity :fd_driven
+     needs_configuration
+end
+
 if has_typekit?('canbus')
 import_types_from "canbus"
 task_context "Remote" do

@@ -10,7 +10,8 @@ namespace controldev
     {
         DAI_None = 0,
         DAI_Joystick = 1,
-        DAI_SliderBox = 2
+        DAI_SliderBox = 2,
+	DAI_SteeringWheel = 3
     };
 
     /** A data structure for raw data values of input devices.
