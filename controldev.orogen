@@ -33,12 +33,7 @@ end
 task_context "Local" do
     subclasses "GenericTask"
 
-
     default_activity :fd_driven
-
-#    #required_activity 
-#    fd_driven
-
     needs_configuration
 
     property("joystick_device", "/std/string", "/dev/input/js0").
@@ -66,9 +61,8 @@ end
 
 deployment "joystick_local" do
     task('joystick_local', 'controldev::Local').
-       #realtime.
-       #priority(25).
-       periodic(0.05)
+       realtime.
+       priority(25)
 
     add_default_logger
 end
