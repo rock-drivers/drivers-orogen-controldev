@@ -40,7 +40,7 @@ task_context "Local" do
         doc("Path to the joystick device")
 end
 
-task_context "SteeringWheel" do
+task_context "SteeringWheelTask" do
      subclasses "GenericTask"
     
      default_activity :fd_driven

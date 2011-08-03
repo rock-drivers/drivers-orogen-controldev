@@ -1,9 +1,12 @@
+# Generated from orogen/lib/orogen/templates/tasks/CMakeLists.txt
+
 include(controldevTaskLib)
 ADD_LIBRARY(${CONTROLDEV_TASKLIB_NAME} SHARED 
     ${CONTROLDEV_TASKLIB_SOURCES})
 
 add_dependencies(${CONTROLDEV_TASKLIB_NAME}
-    regen-toolkit)
+    regen-typekit)
+
 
 TARGET_LINK_LIBRARIES(${CONTROLDEV_TASKLIB_NAME}
     ${OrocosRTT_LIBRARIES}
