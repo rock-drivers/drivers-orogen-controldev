@@ -9,12 +9,17 @@ import_types_from "ControlDevTypes.hpp"
 task_context "GenericTask" do
     abstract
 
-    # Minimum translation speed in m/s
-    property "minSpeed", "double"
-    # Maximum translation speed in m/s
-    property "maxSpeed", "double"
-    # Maximum rotation speed in rad/s
-    property "maxRotationSpeed", "double"
+    property("minSpeed", "double", -1.5).
+	doc("Minimum translation speed in m/s")
+
+    property("maxSpeed", "double", 1.5).
+	doc("Maximum translation speed in m/s")
+
+    property("minRotationSpeed", "double", -Math::PI).
+	doc("Minimum rotation speed in rad/s")
+
+    property("maxRotationSpeed", "double", Math::PI).
+	doc("Maximum rotation speed in rad/s")
 
     output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
@@ -30,13 +35,13 @@ task_context "GenericTask" do
 
 end
 
-task_context "Local" do
+task_context "JoystickTask" do
     subclasses "GenericTask"
 
     default_activity :fd_driven
     needs_configuration
 
-    property("joystick_device", "/std/string", "/dev/input/js0").
+    property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
 end
 
@@ -45,6 +50,18 @@ task_context "SteeringWheelTask" do
     
      default_activity :fd_driven
      needs_configuration
+end
+
+task_context "SliderboxTask" do
+    subclasses "GenericTask"
+
+
+    default_activity :fd_driven
+
+    needs_configuration
+
+    property("device", "/std/string", "/dev/input/js0").
+        doc("Path to the joystick device")
 end
 
 if has_typekit?('canbus')
@@ -66,8 +83,8 @@ else
     STDERR.puts "WARN: the Remote task will be disabled as the canbus orogen component is not present"
 end
 
-deployment "joystick_local" do
-    task('joystick_local', 'controldev::Local').
+deployment "joystick" do
+    task('joystick', 'controldev::JoystickTask').
        realtime.
        priority(25)
 
@@ -76,7 +93,7 @@ end
 
 deployment "test_controldev" do
     do_not_install
-    local  = task("local", "Local").realtime
+    local  = task("joystick", "JoystickTask").realtime
     remote = task("remote", "Remote").realtime
 
     add_default_logger
