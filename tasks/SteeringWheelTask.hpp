@@ -13,7 +13,6 @@ namespace controldev {
     protected:
         LogitechG27 *steerControl;
 
-
     public:
         SteeringWheelTask(std::string const& name = "controldev::SteeringWheelTask");
         SteeringWheelTask(std::string const& name, RTT::ExecutionEngine* engine);

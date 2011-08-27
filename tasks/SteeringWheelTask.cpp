@@ -82,7 +82,8 @@ void SteeringWheelTask::updateHook()
     double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
     double y = rcmd.joyLeftRight;
 
-    mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
+    // mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
+    mcmd.rotation = y;
     mcmd.translation = x;
     
     // Send motion command
