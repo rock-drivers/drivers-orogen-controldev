@@ -96,14 +96,3 @@ deployment "joystick" do
 
     add_default_logger
 end
-
-deployment "test_controldev" do
-    do_not_install
-    local  = task("joystick", "JoystickTask").realtime
-    remote = task("remote", "Remote").realtime
-
-    add_default_logger
-    if !corba_enabled?
-        browse local
-    end
-end
