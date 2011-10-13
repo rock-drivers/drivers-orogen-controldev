@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <description brief="oroGen driver for control devices">
+  <description brief="oroGen driver for control devices (driver for usual control input devices (joystick, joypad, steering wheels)">
       This oroGen component offers components to interface control devices as
       joysticks
   </description>
