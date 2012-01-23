@@ -26,8 +26,8 @@ namespace controldev
         float joyFwdBack;   // Forward/backward axis in [-1; 1]. Forward is positive.
         float joyRotation;  // Rotation axis in [-1; 1]; Clockwise is positive.
         float joyThrottle;  // Throttle values in [0, 1]. Zero is fully pushed.
-        unsigned short joyButtonCount;  // Number of buttons
-        unsigned short joyButtons;      // Bitmask showing pressed buttons
+        unsigned long joyButtonCount;  // Number of buttons
+        unsigned long joyButtons;      // Bitmask showing pressed buttons
 
         float sliderValues[7]; // The slider box has seven slider values
         unsigned short sliderButtons;    // The slider box has four buttons

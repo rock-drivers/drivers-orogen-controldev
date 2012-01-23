@@ -98,7 +98,7 @@ void SteeringWheelTask::updateHook()
 
     // "Only" up to 16 buttons are supported
     int buttonCount = steerControl->getNrButtons();
-    buttonCount = (buttonCount > 16 ? 16 : buttonCount);
+    buttonCount = (buttonCount > 32 ? 32 : buttonCount);
 
     rcmd.joyButtonCount = buttonCount;
 
