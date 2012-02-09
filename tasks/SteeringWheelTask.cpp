@@ -3,7 +3,8 @@
 #include "SteeringWheelTask.hpp"
 #include <controldev/LogitechG27.hpp>
 #include <rtt/extras/FileDescriptorActivity.hpp>
-
+#include <unistd.h>
+#include <fcntl.h>
 
 using namespace controldev;
 
@@ -53,7 +54,7 @@ bool SteeringWheelTask::startHook()
     {
 	activity->watch(steerControl->getFileDescriptor());
     }
-
+    
     return true;
 }
 
@@ -65,8 +66,15 @@ void SteeringWheelTask::updateHook()
     
     RawCommand rcmd;
     
-    //note, this method actually blocks and returns true in any case
-    steerControl->updateState();
+    bool update = false;
+
+    while(steerControl->updateState())
+    {
+	update = true;
+    }
+    
+    if(!update)
+	return;
 
     rcmd.devices |= (int)DAI_SteeringWheel;
 
