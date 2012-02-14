@@ -27,11 +27,15 @@ namespace controldev
         float joyRotation;  // Rotation axis in [-1; 1]; Clockwise is positive.
         float joyThrottle;  // Throttle values in [0, 1]. Zero is fully pushed.
         float joyBrake;     // Brake pedal
-        unsigned long joyButtonCount;  // Number of buttons
-        unsigned long joyButtons;      // Bitmask showing pressed buttons
+        int joyButtonCount;  // Number of buttons
+        int32_t joyButtons;      // Bitmask showing pressed buttons
 
         float sliderValues[7]; // The slider box has seven slider values
         unsigned short sliderButtons;    // The slider box has four buttons
+        
+        RawCommand(): joyLeftRight(0), joyFwdBack(0), joyRotation(0), 
+		      joyThrottle(0), joyBrake(), joyButtonCount(0), 
+		      joyButtons(0), sliderButtons(0) {};
     };
 
     /** Data structure to send separate commands for each motor */
