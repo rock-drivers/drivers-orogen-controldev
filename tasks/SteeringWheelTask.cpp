@@ -102,7 +102,8 @@ void SteeringWheelTask::updateHook()
     buttonCount = (buttonCount > 32 ? 32 : buttonCount);
 
     rcmd.joyButtonCount = buttonCount;
-
+    rcmd.joyButtons = 0;
+    
     // Set button bit list
     for (int i = 0; i < buttonCount; i++)
     {
