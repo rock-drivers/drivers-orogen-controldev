@@ -88,7 +88,7 @@ void SteeringWheelTask::updateHook()
     float min_speed = _minSpeed.get();
     float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
     float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
+    double x = rcmd.joyThrottle  * max_speed;
     double y = rcmd.joyLeftRight;
 
     mcmd.rotation = y;
