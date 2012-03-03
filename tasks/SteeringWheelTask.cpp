@@ -82,6 +82,7 @@ void SteeringWheelTask::updateHook()
     rcmd.joyFwdBack = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
     rcmd.joyRotation = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); // was Pan for iMoby, has to be Turn for cuslam
     rcmd.joyThrottle = steerControl->getAxis(LogitechG27::AXIS_Throttle);
+    rcmd.joyBrake = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
