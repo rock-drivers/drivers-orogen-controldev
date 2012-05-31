@@ -15,4 +15,5 @@
   <depend package="base/orogen/types"/>
   <depend package="tools/logger"/>
   <depend package="orogen"/>
+  <tags>stable</tags>
 </package>
