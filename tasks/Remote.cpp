@@ -38,12 +38,14 @@ void Remote::updateHook()
         canbus::Message msg;
         this->_canJoystick.read(msg);
 
-        rcmd.joyLeftRight   = ((char)msg.data[0]) / 127.0;
-        rcmd.joyFwdBack     = ((char)msg.data[1]) / 127.0;
-        rcmd.joyRotation    = ((char)msg.data[2]) / 127.0;
-        rcmd.joyThrottle    = -((char)msg.data[3]) / 127.0;
-        rcmd.joyButtonCount = 16;
-        rcmd.joyButtons     = msg.data[6];
+        rcmd.joyLeftRight       = ((char)msg.data[0]) / 127.0;
+        rcmd.joyFwdBack         = ((char)msg.data[1]) / 127.0;
+        rcmd.joyRotation        = ((char)msg.data[2]) / 127.0;
+        rcmd.joyThrottle        = -((char)msg.data[3]) / 127.0;
+        rcmd.additionalAxis[0]  = ((char)msg.data[4]) / 127.0;
+        rcmd.additionalAxis[1]  = ((char)msg.data[5]) / 127.0;
+        rcmd.joyButtonCount     = 16;
+        rcmd.joyButtons         = msg.data[6];
 
         // [ticks/ms]
         float max_speed = _maxSpeed.get();

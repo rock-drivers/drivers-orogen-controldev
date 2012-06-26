@@ -29,13 +29,17 @@ namespace controldev
         float joyBrake;     // Brake pedal
         int joyButtonCount;  // Number of buttons
         int32_t joyButtons;      // Bitmask showing pressed buttons
+        float additionalAxis[2]; //Additional Axis (e.G. on Logitech XTreme 3D the thumb-direction button)
 
         float sliderValues[7]; // The slider box has seven slider values
         unsigned short sliderButtons;    // The slider box has four buttons
         
         RawCommand(): joyLeftRight(0), joyFwdBack(0), joyRotation(0), 
 		      joyThrottle(0), joyBrake(), joyButtonCount(0), 
-		      joyButtons(0), sliderButtons(0) {};
+		      joyButtons(0), sliderButtons(0) {
+                        additionalAxis[0] =0;
+                        additionalAxis[1] =0;
+                      };
     };
 
     /** Data structure to send separate commands for each motor */
