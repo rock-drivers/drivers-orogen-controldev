@@ -55,13 +55,9 @@ bool JoystickTask::startHook()
     
     return true;
 }
-void JoystickTask::updateHook()
-{
-    JoystickTaskBase::updateHook();
-    
-    base::MotionCommand2D mcmd;
 
-    RawCommand rcmd;
+
+bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
 
     bool update = false;
     // New data available at the Joystick device
@@ -71,7 +67,7 @@ void JoystickTask::updateHook()
     }
     
     if(!update)
-	return;
+	return false;
     
     rcmd.devices = (int)DAI_Joystick;
 
@@ -79,7 +75,30 @@ void JoystickTask::updateHook()
     rcmd.joyFwdBack = this->joystick->getAxis(Joystick::AXIS_Forward);
     rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Turn); // was Pan for iMoby, has to be Turn for cuslam
     rcmd.joyThrottle = this->joystick->getAxis(Joystick::AXIS_Slider);
+    
+    // "Only" up to 16 buttons are supported
+    int buttonCount = this->joystick->getNrButtons();
+    buttonCount = (buttonCount > 16 ? 16 : buttonCount);
 
+    rcmd.joyButtonCount = buttonCount;
+    
+    // Set button bit list
+    for (int i = 0; i < buttonCount; i++)
+    {
+	if (this->joystick->getButtonPressed(i))
+	{
+	    rcmd.joyButtons |= (1 << i);
+	}
+    }
+    
+    _raw_command.write(rcmd);
+
+    return true;
+}
+
+void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd) {
+    base::MotionCommand2D mcmd;
+    
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
     float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
@@ -92,23 +111,18 @@ void JoystickTask::updateHook()
     
     // Send motion command
     _motion_command.write(mcmd);
+}
 
-    // "Only" up to 16 buttons are supported
-    int buttonCount = this->joystick->getNrButtons();
-    buttonCount = (buttonCount > 16 ? 16 : buttonCount);
+void JoystickTask::updateHook()
+{
+    JoystickTaskBase::updateHook();
+     
+    RawCommand rcmd;
 
-    rcmd.joyButtonCount = buttonCount;
+    if (!updateRawCommand(rcmd)) return;
 
-    // Set button bit list
-    for (int i = 0; i < buttonCount; i++)
-    {
-	if (this->joystick->getButtonPressed(i))
-	{
-	    rcmd.joyButtons |= (1 << i);
-	}
-    }
-    
-    _raw_command.write(rcmd);
+    sendMotionCommand2D(rcmd);
+
 }
 
 void JoystickTask::stopHook()

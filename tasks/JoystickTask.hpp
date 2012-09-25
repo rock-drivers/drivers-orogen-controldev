@@ -14,6 +14,8 @@ namespace controldev {
     protected:
         Joystick *joystick;
 
+        virtual bool updateRawCommand(RawCommand& rcmd);
+        void sendMotionCommand2D(const RawCommand& rcmd);
 
     public:
         JoystickTask(std::string const& name = "controldev::JoystickTask");
