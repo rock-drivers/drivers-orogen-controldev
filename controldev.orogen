@@ -21,6 +21,8 @@ task_context "GenericTask" do
     property("maxRotationSpeed", "double", Math::PI).
 	doc("Maximum rotation speed in rad/s")
 
+    property("axisScale","/std/vector<double>")
+
     output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
 

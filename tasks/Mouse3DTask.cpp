@@ -9,15 +9,32 @@ using namespace controldev;
 Mouse3DTask::Mouse3DTask(std::string const& name)
     : Mouse3DTaskBase(name)
 {
+    interface = new ConnexionHID();
+    std::vector<double> v= _axisScale.get();
+    v.resize(6);
+    for(int i=0;i<6;i++){
+        v[i] = interface->axisScalinig((ConnexionHID::Mapping)i); 
+    }
+    _axisScale.set(v);
+
 }
 
 Mouse3DTask::Mouse3DTask(std::string const& name, RTT::ExecutionEngine* engine)
     : Mouse3DTaskBase(name, engine)
 {
+    interface = new ConnexionHID();
+    std::vector<double> v= _axisScale.get();
+    v.resize(6);
+    for(int i=0;i<6;i++){
+        v[i] = interface->axisScalinig((ConnexionHID::Mapping)i); 
+    }
+    _axisScale.set(v);
+
 }
 
 Mouse3DTask::~Mouse3DTask()
 {
+    delete interface;
 }
 
 
@@ -29,13 +46,21 @@ bool Mouse3DTask::configureHook()
 {
     if (! controldev::GenericTask::configureHook())
         return false;
-   
-    interface = new ConnexionHID();
+
+
     if (!interface->init())
     {
         std::cerr << "Warning: Unable to open 3D Mousedevice" << std::endl;
-        delete interface;
 	return false;
+    }
+
+    std::vector<double> v= _axisScale.get();
+    if(v.size() != 6){
+        std::cerr << "Axis scale has wrong dimension" << std::endl;
+        return false;
+    }
+    for(int i=0;i<6;i++){
+        interface->axisScalinig((ConnexionHID::Mapping)i) = v[i]; 
     }
     return true;
     
@@ -108,6 +133,5 @@ void Mouse3DTask::cleanupHook()
 {
     
     controldev::GenericTask::cleanupHook();
-    delete interface;
 }
 
