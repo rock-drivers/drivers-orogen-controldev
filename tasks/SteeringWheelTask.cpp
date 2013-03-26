@@ -76,20 +76,23 @@ void SteeringWheelTask::updateHook()
     if(!update)
 	return;
 
-    rcmd.devices |= (int)DAI_SteeringWheel;
+    rcmd.deviceIdentifier = steerControl->getName();
 
-    rcmd.joyLeftRight = steerControl->getAxis(LogitechG27::AXIS_Wheel);
-    rcmd.joyFwdBack = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
-    rcmd.joyRotation = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); // was Pan for iMoby, has to be Turn for cuslam
-    rcmd.joyThrottle = steerControl->getAxis(LogitechG27::AXIS_Throttle);
-    rcmd.joyBrake = steerControl->getAxis(LogitechG27::AXIS_Brake);
+    rcmd.axisValue.resize(1);
+    rcmd.axisValue[0].resize(5);
+
+    rcmd.axisValue[0][1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
+    rcmd.axisValue[0][0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
+    rcmd.axisValue[0][2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
+    rcmd.axisValue[0][3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
+    rcmd.axisValue[0][4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+    float max_speed_ratio = (rcmd.axisValue[0][3] + min_speed) / (1.0 + min_speed);
     float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.joyThrottle  * max_speed;
-    double y = rcmd.joyLeftRight;
+    double x = rcmd.axisValue[0][3]  * max_speed;
+    double y = rcmd.axisValue[0][1];
 
     mcmd.rotation = y;
     mcmd.translation = x;
@@ -97,20 +100,12 @@ void SteeringWheelTask::updateHook()
     // Send motion command
     _motion_command.write(mcmd);
 
-    // "Only" up to 16 buttons are supported
     int buttonCount = steerControl->getNrButtons();
-    buttonCount = (buttonCount > 32 ? 32 : buttonCount);
-
-    rcmd.joyButtonCount = buttonCount;
-    rcmd.joyButtons = 0;
     
     // Set button bit list
     for (int i = 0; i < buttonCount; i++)
     {
-	if (steerControl->getButtonPressed(i))
-	{
-	    rcmd.joyButtons |= (1 << i);
-	}
+        rcmd.buttonValue.push_back(steerControl->getButtonPressed(i));
     }
     
     // Send raw command

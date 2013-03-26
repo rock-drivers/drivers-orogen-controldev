@@ -69,26 +69,24 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
     if(!update)
 	return false;
     
-    rcmd.devices = (int)DAI_Joystick;
-
-    rcmd.joyLeftRight = this->joystick->getAxis(Joystick::AXIS_Sideward);
-    rcmd.joyFwdBack = this->joystick->getAxis(Joystick::AXIS_Forward);
-    rcmd.joyRotation = this->joystick->getAxis(Joystick::AXIS_Turn); // was Pan for iMoby, has to be Turn for cuslam
-    rcmd.joyThrottle = this->joystick->getAxis(Joystick::AXIS_Slider);
+    rcmd.deviceIdentifier= this->joystick->getName();
     
-    // "Only" up to 16 buttons are supported
+    std::vector<double> axis;
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Forward));
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Sideward));
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Turn));
+    
+    std::vector<double> axis2;
+    axis2.push_back(this->joystick->getAxis(Joystick::AXIS_Slider));
+    rcmd.axisValue.push_back(axis);
+    rcmd.axisValue.push_back(axis2);
+    
     int buttonCount = this->joystick->getNrButtons();
-    buttonCount = (buttonCount > 16 ? 16 : buttonCount);
 
-    rcmd.joyButtonCount = buttonCount;
-    
     // Set button bit list
     for (int i = 0; i < buttonCount; i++)
     {
-	if (this->joystick->getButtonPressed(i))
-	{
-	    rcmd.joyButtons |= (1 << i);
-	}
+        rcmd.buttonValue.push_back(this->joystick->getButtonPressed(i));
     }
     
     _raw_command.write(rcmd);
@@ -98,13 +96,16 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
 
 void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd) {
     base::MotionCommand2D mcmd;
-    
+    if(rcmd.axisValue.size() != 2) return;
+    if(rcmd.axisValue[0].size() != 3) return;
+    if(rcmd.axisValue[1].size() != 1) return;
+
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+    float max_speed_ratio = (rcmd.axisValue[1][0] * min_speed) / (1.0 + min_speed);
     float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
-    double y = rcmd.joyLeftRight;
+    double x = rcmd.axisValue[0][0] * max_speed * max_speed_ratio;
+    double y = rcmd.axisValue[0][1];
     
     mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
     mcmd.translation = x;

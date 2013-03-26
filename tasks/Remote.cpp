@@ -33,27 +33,33 @@ void Remote::updateHook()
 
     while (_canJoystick.read(msg) == RTT::NewData)
     {
-        rcmd.devices |= DAI_Joystick;
+        rcmd.deviceIdentifier = "CAN-Joystick";
+
+        rcmd.axisValue.resize(3);
+        rcmd.axisValue[0].resize(3);
+        rcmd.axisValue[1].resize(1);
+        rcmd.axisValue[2].resize(2);
 
         canbus::Message msg;
         this->_canJoystick.read(msg);
 
-        rcmd.joyLeftRight       = ((char)msg.data[0]) / 127.0;
-        rcmd.joyFwdBack         = ((char)msg.data[1]) / 127.0;
-        rcmd.joyRotation        = ((char)msg.data[2]) / 127.0;
-        rcmd.joyThrottle        = -((char)msg.data[3]) / 127.0;
-        rcmd.additionalAxis[0]  = ((char)msg.data[4]) / 127.0;
-        rcmd.additionalAxis[1]  = ((char)msg.data[5]) / 127.0;
-        rcmd.joyButtonCount     = 16;
-        rcmd.joyButtons         = msg.data[6];
+        rcmd.axisValue[0][1]    = ((char)msg.data[0]) / 127.0;
+        rcmd.axisValue[0][0]    = ((char)msg.data[1]) / 127.0;
+        rcmd.axisValue[0][2]    = ((char)msg.data[2]) / 127.0;
+        rcmd.axisValue[1][0]    = -((char)msg.data[3]) / 127.0;
+        rcmd.axisValue[2][0]    = ((char)msg.data[4]) / 127.0;
+        rcmd.axisValue[2][1]    = ((char)msg.data[5]) / 127.0;
+        for(int i=0;i<8;i++){
+            rcmd.buttonValue.push_back(msg.data[6] &(1<<i));
+        }
 
         // [ticks/ms]
         float max_speed = _maxSpeed.get();
         float min_speed = _minSpeed.get();
-        float max_speed_ratio = (rcmd.joyThrottle + min_speed) / (1.0 + min_speed);
+        float max_speed_ratio = (rcmd.axisValue[1][0] + min_speed) / (1.0 + min_speed);
         float max_rotation_speed = _maxRotationSpeed.get();
-        double x = rcmd.joyFwdBack   * max_speed * max_speed_ratio;
-        double y = rcmd.joyLeftRight;
+        double x = rcmd.axisValue[0][0]   * max_speed * max_speed_ratio;
+        double y = rcmd.axisValue[0][1];
         
         mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
         mcmd.translation = x;
@@ -61,32 +67,25 @@ void Remote::updateHook()
         // Send motion command
         this->_motion_command.write(mcmd);
 
-        // "Only" up to 16 buttons are supported
-//            int buttonCount = this->joystick->getNrButtons();
-//            buttonCount = (buttonCount > 16 ? 16 : buttonCount);
-
-
-        // Set button bit list
-//            for (int i = 0; i < buttonCount; i++)
-//            {
-//                if (this->joystick->getButtonPressed(i))
-//                {
-//                    rcmd.joyButtons |= (1 << i);
-//                }
-//            }
-
     }
 
     while (_canSliderBox.read(msg) == RTT::NewData)
     {
-        rcmd.devices |= DAI_SliderBox;
+        rcmd.axisValue.clear();
+        rcmd.buttonValue.clear();
+
+        rcmd.axisValue.push_back(std::vector<double>());
+        rcmd.axisValue[0].resize(6);
+        rcmd.deviceIdentifier = "CAN-Sliderbox";
 
         for (int i = 0; i < 7; i++)
         {
-            rcmd.sliderValues[i] = msg.data[i];
+            rcmd.axisValue[0][i] = msg.data[i];
         }
 
-        rcmd.sliderButtons |= msg.data[7];
+        for(int i=0;i<8;i++){
+            rcmd.buttonValue.push_back(msg.data[7] &(1<<i));
+        }
 
         FourWheelCommand wheel_command;
         if (mapFromSliderbox(wheel_command, rcmd))

@@ -35,14 +35,14 @@ GenericTask::~GenericTask()
 
 bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& input)
 {
-	if (!(input.devices & controldev::DAI_SliderBox))
+	if (input.deviceIdentifier.compare("AsguardSliderBox") != 0  && input.deviceIdentifier.compare("CAN-Sliderbox") != 0)
 		return false;
 
 	double sliderValues[7];
 	for (int i = 0; i < 7; i++)
 	{
 		// Reads the slider value from MIN to MAX and scales it to 0 to 1
-		sliderValues[i] = (( input.sliderValues[i]- SLIDER_MIN) / (SLIDER_MAX-SLIDER_MIN));
+		sliderValues[i] = (( input.axisValue[0][i]- SLIDER_MIN) / (SLIDER_MAX-SLIDER_MIN));
 
 		// Rounds the data outside MIN and MAX
 		if (sliderValues[i] > 1.0)
@@ -52,7 +52,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 	}
 
 	/* OFF state */	
-	if (! (input.sliderButtons & (1 << 3)) )/* Button 4 */
+	if (! input.buttonValue[3] )/* Button 4 */
 	{
 		cmd = FourWheelCommand();
 		return true;
@@ -64,7 +64,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 	for (int i=0;i<4;i++)
 	{
 		// Sets the mode based on status of Button 3
-		if (input.sliderButtons & (1 << 2))  /* Button 3 */
+		if (input.buttonValue[2])  /* Button 3 */
 		{
 			/* PWM Mode */
 			cmd.mode[i] = base::actuators::DM_PWM;
@@ -81,7 +81,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 	/* Sets the driving mode and calulates the individual velocities*/
 
 	/* Individual wheel and Master wheel set drive */
-	if (input.sliderButtons & (1 << 1))   /* Button 2 */
+	if (input.buttonValue[1])   /* Button 2 */
 	{
 
 		cmd.target[3] = 2  * (sliderValues[SLIDER_MASTER_VEL_LEFT]  - 0.5) 
@@ -137,7 +137,7 @@ bool GenericTask::mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& inpu
 	}
 
 
-	if (input.sliderButtons & (1 << 0))   /* Button 1 */
+	if (input.buttonValue[0])   /* Button 1 */
 	    cmd.sync = true;
 	else 
 	    cmd.sync = false;
