@@ -47,6 +47,16 @@ task_context "JoystickTask" do
         doc("Path to the joystick device")
 end
 
+task_context "Mouse3DTask" do
+    subclasses "GenericTask"
+
+    doc("A Task that provides a 3D Mouse \"3DConnexion\" driver")
+
+    default_activity :fd_driven
+    needs_configuration
+
+end
+
 task_context "SteeringWheelTask" do
     subclasses "GenericTask"
 
