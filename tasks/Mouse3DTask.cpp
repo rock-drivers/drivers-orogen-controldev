@@ -29,10 +29,12 @@ bool Mouse3DTask::configureHook()
 {
     if (! controldev::GenericTask::configureHook())
         return false;
-    
+   
+    interface = new ConnexionHID();
     if (!interface->init())
     {
         std::cerr << "Warning: Unable to open 3D Mousedevice" << std::endl;
+        delete interface;
 	return false;
     }
     return true;
@@ -106,5 +108,6 @@ void Mouse3DTask::cleanupHook()
 {
     
     controldev::GenericTask::cleanupHook();
+    delete interface;
 }
 
