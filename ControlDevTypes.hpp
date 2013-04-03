@@ -51,6 +51,7 @@ namespace controldev
          */
         std::vector<bool> buttonValue;
 
+        /*   DEPRICATED
         int devices;
 
            float joyLeftRight; // Left/right axis in [-1; 1]. Right is positive.
@@ -71,6 +72,7 @@ namespace controldev
                            additionalAxis[0] =0;
                            additionalAxis[1] =0;
                          };
+                         */
     };
 
     /** Data structure to send separate commands for each motor */
