@@ -9,6 +9,12 @@ using namespace controldev;
 JoystickTask::JoystickTask(std::string const& name)
     : JoystickTaskBase(name), joystick(new controldev::Joystick())
 {
+    std::vector<double> v= _axisScale.get();
+    v.resize(4);
+    for(int i=0;i<4;i++){
+        v[i] = 1.0; 
+    }
+    _axisScale.set(v);
 }
 
 JoystickTask::JoystickTask(std::string const& name, RTT::ExecutionEngine* engine)
@@ -59,6 +65,7 @@ bool JoystickTask::startHook()
 
 bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
 
+    assert(_axisScale.get().size() == 4);
     bool update = false;
     // New data available at the Joystick device
     while(this->joystick->updateState())
@@ -66,18 +73,18 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
 	update = true;
     }
     
-    if(!update)
-	return false;
+//    if(!update)
+//	return false;
     
     rcmd.deviceIdentifier= this->joystick->getName();
     
     std::vector<double> axis;
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Forward));
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Sideward));
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Turn));
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Forward)*_axisScale.get()[0]);
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Sideward)*_axisScale.get()[1]);
+    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Turn)*_axisScale.get()[2]);
     
     std::vector<double> axis2;
-    axis2.push_back(this->joystick->getAxis(Joystick::AXIS_Slider));
+    axis2.push_back(this->joystick->getAxis(Joystick::AXIS_Slider)*_axisScale.get()[3]);
     rcmd.axisValue.push_back(axis);
     rcmd.axisValue.push_back(axis2);
     

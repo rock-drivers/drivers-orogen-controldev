@@ -42,11 +42,15 @@ task_context "JoystickTask" do
 
     doc("A Task that provides a joystick driver")
 
-    default_activity :fd_driven
+#    default_activity :fd_driven
     needs_configuration
+
+    periodic 0.1
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
+
+    property("axisScaling","/std/vector<double>")
 end
 
 task_context "Mouse3DTask" do

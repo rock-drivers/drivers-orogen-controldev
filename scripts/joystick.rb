@@ -18,7 +18,15 @@ Orocos.run 'controldev::JoystickTask' => 'Joystick' do
     
     while(1)
         if raw = raw_reader.read_new
-            puts "#{raw.joyFwdBack} #{raw.joyLeftRight} #{raw.joyRotation} #{raw.joyThrottle}"
+            if(raw.axisValue.size == 2)
+                if(raw.axisValue[0].size == 3 and raw.axisValue[1].size == 1)
+                    puts "#{raw.axisValue[0][0]} #{raw.axisValue[0][1]} #{raw.axisValue[0][2]} #{raw.axisValue[1][0]}"
+                else
+                    STDOUT.puts "Warning sizes ar invalud: #{raw.axisValue[0].size} #{raw.axisValue[1].size}"
+                end
+            else
+                STDOUT.puts "Warning sizes ar invalud: #{raw.AxisValue.size}"
+            end
         end
         if m2d = m2d_reader.read_new
             #puts "#{m2d.translation} #{m2d.rotation}"
