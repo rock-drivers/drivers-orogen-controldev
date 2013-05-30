@@ -66,7 +66,9 @@ void Remote::updateHook()
 
         // Send motion command
         this->_motion_command.write(mcmd);
-
+        
+        // Send raw command
+        _raw_command.write(rcmd);
     }
 
     while (_canSliderBox.read(msg) == RTT::NewData)
@@ -90,10 +92,11 @@ void Remote::updateHook()
         FourWheelCommand wheel_command;
         if (mapFromSliderbox(wheel_command, rcmd))
             _four_wheel_command.write(wheel_command);
+
+        // Send raw command
+        _raw_command.write(rcmd);
     }
 
-    // Send raw command
-    _raw_command.write(rcmd);
 }
 
 
