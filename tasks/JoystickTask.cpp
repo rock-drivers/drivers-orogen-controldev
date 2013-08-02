@@ -137,7 +137,8 @@ void JoystickTask::stopHook()
 {
     RTT::extras::FileDescriptorActivity* activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
-    activity->clearAllWatches();
+    if(activity)
+        activity->clearAllWatches();
 
     JoystickTaskBase::stopHook();
 }
