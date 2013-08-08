@@ -24,10 +24,7 @@ bool Remote::configureHook()
 void Remote::updateHook()
 {
     base::MotionCommand2D mcmd;
-    memset(&mcmd, 0, sizeof(base::MotionCommand2D));
-
     RawCommand rcmd;
-    memset(&rcmd, 0, sizeof(RawCommand));
 
     canbus::Message msg;
 
