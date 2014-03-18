@@ -29,7 +29,7 @@ void Remote::updateHook()
     canbus::Message msg;
     int currentbit;
    
-    while (_canGenericInputDevice.read(msg) == RTT::NewData){
+    while (_canInputDevice.read(msg) == RTT::NewData){
         currentbit = 3;
         current_sequence_number = msg.data[0]>>5;
 
