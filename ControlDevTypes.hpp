@@ -2,6 +2,7 @@
 #define CONTROLDEVTYPES_HPP
 
 #include <base/actuators/commands.h>
+#include <vector>
 
 namespace controldev
 {
@@ -13,7 +14,6 @@ namespace controldev
         DAI_SliderBox = 2,
 	DAI_SteeringWheel = 3
     };
-
     enum Axis{
         RX=0,
         RY,
@@ -22,7 +22,6 @@ namespace controldev
         TY,
         TZ
     };
-
     /** A data structure for raw data values of input devices.
      *  Currently, only the Joystick and SliderBox inmput devices
      *  are supported.

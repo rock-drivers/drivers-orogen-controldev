@@ -2,10 +2,11 @@ name "controldev"
 version "0.0"
 
 using_library "controldev"
-
+using_library "canbus"
+using_task_library "canbus"
 import_types_from "base"
 import_types_from "ControlDevTypes.hpp"
-
+import_types_from "canbus"
 task_context "GenericTask" do
     abstract
 
@@ -67,7 +68,7 @@ task_context "SteeringWheelTask" do
     subclasses "GenericTask"
 
     doc("A Task that provides a SteeringWheel driver")
-    
+
     default_activity :fd_driven
     needs_configuration
 end
@@ -89,15 +90,13 @@ import_types_from "canbus"
 task_context "Remote" do
     subclasses "GenericTask"
 
-    doc("A Task that receives CAN messages and translates them into Joystick/Sliderbox like output")
+    doc("A Task that receives CAN messages and converts them into raw-commands")
 
     needs_configuration
 
-    input_port("canJoystick", "canbus/Message").
-        doc("Input port for joystick messages from the CAN dispatcher module")
-
-    input_port("canSliderBox", "canbus/Message").
-        doc("Input port for slider box messages from the CAN dispatcher module")
+    input_port("canInputDevice", "canbus/Message").
+        doc("Input port for generic messegen from inputdevices").
+        needs_reliable_connection
 
     port_driven
 end
@@ -105,10 +104,3 @@ else
     STDERR.puts "WARN: the Remote task will be disabled as the canbus orogen component is not present"
 end
 
-deployment "joystick" do
-    task('joystick', 'controldev::JoystickTask').
-       realtime.
-       priority(25)
-
-    add_default_logger
-end

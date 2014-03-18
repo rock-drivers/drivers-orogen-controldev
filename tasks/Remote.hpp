@@ -10,6 +10,20 @@ namespace controldev {
     {
 	friend class RemoteBase;
     protected:
+//        GenericRawCommand grc;
+        unsigned int sliders;
+        unsigned int buttons;
+        unsigned int resolution;
+        unsigned int next_sequenznumber;
+        unsigned int expected_sequences;
+        unsigned int payloadbits;
+        unsigned int current_button;
+        unsigned int current_slider;
+        unsigned int current_sequence_number;
+        unsigned char buffered_char;
+        unsigned int buffered_charx;
+        unsigned int bad_packages;
+    	RawCommand rcmd;
     
     
 
