@@ -57,6 +57,8 @@ task_context "Mouse3DTask" do
     subclasses "GenericTask"
 
     doc("A Task that provides a 3D Mouse \"3DConnexion\" driver")
+    
+    output_port("twist_out", "base/samples/RigidBodyState")
 
     default_activity :fd_driven
     needs_configuration
