@@ -58,6 +58,8 @@ task_context "Mouse3DTask" do
 
     doc("A Task that provides a 3D Mouse \"3DConnexion\" driver")
     
+    property("source_frame", "std/string", "")  
+    property("target_frame", "std/string", "")
     output_port("twist_out", "base/samples/RigidBodyState")
 
     default_activity :fd_driven
@@ -114,3 +116,4 @@ deployment "joystick" do
 
     add_default_logger
 end
+

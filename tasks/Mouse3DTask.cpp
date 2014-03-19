@@ -87,7 +87,6 @@ bool Mouse3DTask::startHook()
 
 void Mouse3DTask::updateHook()
 {
-    
     controldev::GenericTask::updateHook();
    
     RawCommand rcmd;
@@ -109,6 +108,16 @@ void Mouse3DTask::updateHook()
     rcmd.buttonValue.push_back(values.button1);
     rcmd.buttonValue.push_back(values.button2);
     _raw_command.write(rcmd);
+
+    base::samples::RigidBodyState rbs;
+    for(size_t i = 0; i < 3; i++){
+        rbs.velocity(i) = rcmd.axisValue[0][i];
+        rbs.angular_velocity(i) = rcmd.axisValue[0][i+3];
+    }
+    rbs.time = base::Time::now();
+    rbs.sourceFrame = _source_frame.get();
+    rbs.targetFrame = _target_frame.get();
+    _twist_out.write(rbs);
 }
 
 
