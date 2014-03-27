@@ -28,17 +28,20 @@ void Remote::updateHook()
 
     canbus::Message msg;
 
+    bool gotCmd = false;
     while (_canJoystick.read(msg) == RTT::NewData)
     {
+	if(msg.can_id != 0x100)
+	    continue;
+
+	gotCmd = true;
+
         rcmd.deviceIdentifier = "CAN-Joystick";
 
         rcmd.axisValue.resize(3);
         rcmd.axisValue[0].resize(3);
         rcmd.axisValue[1].resize(1);
         rcmd.axisValue[2].resize(2);
-
-        canbus::Message msg;
-        this->_canJoystick.read(msg);
 
         rcmd.axisValue[0][1]    = ((char)msg.data[0]) / 127.0;
         rcmd.axisValue[0][0]    = ((char)msg.data[1]) / 127.0;
@@ -61,8 +64,12 @@ void Remote::updateHook()
         mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
         mcmd.translation = x;
 
+    }
+
+    if(gotCmd)
+    {
         // Send motion command
-        this->_motion_command.write(mcmd);
+        _motion_command.write(mcmd);
         
         // Send raw command
         _raw_command.write(rcmd);
