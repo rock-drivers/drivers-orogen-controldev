@@ -78,21 +78,20 @@ void SteeringWheelTask::updateHook()
 
     rcmd.deviceIdentifier = steerControl->getName();
 
-    rcmd.axisValue.resize(1);
-    rcmd.axisValue[0].resize(5);
+    rcmd.axes.elements.resize(5);
 
-    rcmd.axisValue[0][1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
-    rcmd.axisValue[0][0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
-    rcmd.axisValue[0][2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
-    rcmd.axisValue[0][3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
-    rcmd.axisValue[0][4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
+    rcmd.axes.elements[1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
+    rcmd.axes.elements[0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
+    rcmd.axes.elements[2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
+    rcmd.axes.elements[3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
+    rcmd.axes.elements[4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.axisValue[0][3] + min_speed) / (1.0 + min_speed);
+    float max_speed_ratio = (rcmd.axes.elements[3] + min_speed) / (1.0 + min_speed);
     float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.axisValue[0][3]  * max_speed;
-    double y = rcmd.axisValue[0][1];
+    double x = rcmd.axes.elements[3]  * max_speed;
+    double y = rcmd.axes.elements[1];
 
     mcmd.rotation = y;
     mcmd.translation = x;
@@ -105,7 +104,7 @@ void SteeringWheelTask::updateHook()
     // Set button bit list
     for (int i = 0; i < buttonCount; i++)
     {
-        rcmd.buttonValue.push_back(steerControl->getButtonPressed(i));
+        rcmd.buttons.elements.push_back(steerControl->getButtonPressed(i));
     }
     
     // Send raw command

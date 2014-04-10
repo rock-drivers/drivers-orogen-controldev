@@ -50,7 +50,6 @@ task_context "JoystickTask" do
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
 
-    property("axisScaling","/std/vector<double>")
 end
 
 task_context "Mouse3DTask" do

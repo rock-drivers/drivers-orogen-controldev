@@ -2,6 +2,7 @@
 #define CONTROLDEVTYPES_HPP
 
 #include <base/actuators/commands.h>
+#include <base/NamedVector.hpp>
 
 namespace controldev
 {
@@ -35,24 +36,21 @@ namespace controldev
 	std::string deviceIdentifier;
 
         /*
-         * The Timesamp
+         * The time stamp
          */
         base::Time time;
 
-        /* Index 1: num-of input axis, //index 2: dimensions of this axis
-         * If you have an gamepand which has 2 2Dknops you have an [2][2] 
-         * size'd array for an 3D Mouse you could have [1][6]
-         */
-        std::vector<std::vector<double> > axisValue;
+        /* Named vector for the axis */
+        base::NamedVector <double> axes;
 
         /*
-         * Switch/Key Values
+         * Named vector Switch/Key Values
          * Three State switches are handles as two
-         * Comment, this has to be handeld as an bool vecotr.
-         * Sine bools are buggy in rock currently, workaround it with an uint8_t
-         * vecotr. For more details see http://rock.opendfki.de/ticket/187
+         * Comment, this has to be handle as an boolean vector.
+         * Sine boolean are buggy in rock currently, workaround it with an uint8_t
+         * vector. For more details see http://rock.opendfki.de/ticket/187
          */
-        std::vector<uint8_t> buttonValue;
+        base::NamedVector <int> buttons;
     };
 
     /** Data structure to send separate commands for each motor */

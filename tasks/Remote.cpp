@@ -38,29 +38,26 @@ void Remote::updateHook()
 
         rcmd.deviceIdentifier = "CAN-Joystick";
 
-        rcmd.axisValue.resize(3);
-        rcmd.axisValue[0].resize(3);
-        rcmd.axisValue[1].resize(1);
-        rcmd.axisValue[2].resize(2);
+        rcmd.axes.elements.resize(6);
 
-        rcmd.axisValue[0][1]    = ((char)msg.data[0]) / 127.0;
-        rcmd.axisValue[0][0]    = ((char)msg.data[1]) / 127.0;
-        rcmd.axisValue[0][2]    = ((char)msg.data[2]) / 127.0;
-        rcmd.axisValue[1][0]    = -((char)msg.data[3]) / 127.0;
-        rcmd.axisValue[2][0]    = ((char)msg.data[4]) / 127.0;
-        rcmd.axisValue[2][1]    = ((char)msg.data[5]) / 127.0;
+        rcmd.axes.elements[0]    = ((char)msg.data[0]) / 127.0;
+        rcmd.axes.elements[1]    = ((char)msg.data[1]) / 127.0;
+        rcmd.axes.elements[2]    = ((char)msg.data[2]) / 127.0;
+        rcmd.axes.elements[3]    = -((char)msg.data[3]) / 127.0;
+        rcmd.axes.elements[4]    = ((char)msg.data[4]) / 127.0;
+        rcmd.axes.elements[5]    = ((char)msg.data[5]) / 127.0;
         for(int i=0;i<8;i++){
-            rcmd.buttonValue.push_back(msg.data[6] &(1<<i));
+            rcmd.buttons.elements.push_back(msg.data[6] &(1<<i));
         }
 
         // [ticks/ms]
         float max_speed = _maxSpeed.get();
         float min_speed = _minSpeed.get();
-        float max_speed_ratio = (rcmd.axisValue[1][0] + min_speed) / (1.0 + min_speed);
+        float max_speed_ratio = (rcmd.axes.elements[3] + min_speed) / (1.0 + min_speed);
         float max_rotation_speed = _maxRotationSpeed.get();
-        double x = rcmd.axisValue[0][0]   * max_speed * max_speed_ratio;
-        double y = rcmd.axisValue[0][1];
-        
+        double x = rcmd.axes.elements[1]   * max_speed * max_speed_ratio;
+        double y = rcmd.axes.elements[0];
+
         mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
         mcmd.translation = x;
 
@@ -70,27 +67,26 @@ void Remote::updateHook()
     {
         // Send motion command
         _motion_command.write(mcmd);
-        
+
         // Send raw command
         _raw_command.write(rcmd);
     }
 
     while (_canSliderBox.read(msg) == RTT::NewData)
     {
-        rcmd.axisValue.clear();
-        rcmd.buttonValue.clear();
+        rcmd.axes.elements.clear();
+        rcmd.buttons.elements.clear();
 
-        rcmd.axisValue.push_back(std::vector<double>());
-        rcmd.axisValue[0].resize(6);
+        rcmd.axes.elements.resize(6);
         rcmd.deviceIdentifier = "CAN-Sliderbox";
 
         for (int i = 0; i < 7; i++)
         {
-            rcmd.axisValue[0][i] = msg.data[i];
+            rcmd.axes.elements[i] = msg.data[i];
         }
 
         for(int i=0;i<8;i++){
-            rcmd.buttonValue.push_back(msg.data[7] &(1<<i));
+            rcmd.buttons.elements.push_back(msg.data[7] &(1<<i));
         }
 
         FourWheelCommand wheel_command;

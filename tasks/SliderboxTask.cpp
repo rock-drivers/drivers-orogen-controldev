@@ -76,17 +76,16 @@ void SliderboxTask::updateHook()
     
     rcmd.deviceIdentifier = "Sliderbox";
 
-    rcmd.axisValue.resize(1);
-    rcmd.axisValue[0].resize(6);
+    rcmd.axes.elements.resize(6);
     
     for (int i = 0; i < 7; i++)
     {
-	rcmd.axisValue[0][i] = this->sliderBox->getValue(i);
+	rcmd.axes.elements[i] = this->sliderBox->getValue(i);
     }
 
     for (int i = 0; i < 4; i++)
     {
-        rcmd.buttonValue.push_back(this->sliderBox->getButtonOn(i));
+        rcmd.buttons.elements.push_back(this->sliderBox->getButtonOn(i));
     }
 
     _raw_command.write(rcmd);

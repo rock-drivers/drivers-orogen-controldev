@@ -7,12 +7,16 @@
 
 namespace controldev {
     class Joystick;
-    
+
     class JoystickTask : public JoystickTaskBase
     {
 	friend class JoystickTaskBase;
     protected:
         Joystick *joystick;
+        int buttonCount, axisCount;
+
+        /** Configuration values **/
+        std::vector<double>axisScale;
 
         virtual bool updateRawCommand(RawCommand& rcmd);
         void sendMotionCommand2D(const RawCommand& rcmd);

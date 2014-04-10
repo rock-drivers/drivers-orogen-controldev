@@ -2,6 +2,7 @@
 
 #include "JoystickTask.hpp"
 #include <controldev/Joystick.hpp>
+#include <controldev/EvdevHelper.hpp>
 #include <rtt/extras/FileDescriptorActivity.hpp>
 
 using namespace controldev;
@@ -9,12 +10,6 @@ using namespace controldev;
 JoystickTask::JoystickTask(std::string const& name)
     : JoystickTaskBase(name), joystick(new controldev::Joystick())
 {
-    std::vector<double> v= _axisScale.get();
-    v.resize(4);
-    for(int i=0;i<4;i++){
-        v[i] = 1.0; 
-    }
-    _axisScale.set(v);
 }
 
 JoystickTask::JoystickTask(std::string const& name, RTT::ExecutionEngine* engine)
@@ -35,7 +30,7 @@ bool JoystickTask::configureHook()
 {
     if (! JoystickTaskBase::configureHook())
         return false;
-    
+
     // Try to connect the Joystick
     if (!joystick->init(_device.value()))
     {
@@ -44,6 +39,15 @@ bool JoystickTask::configureHook()
 	return false;
     }
 
+
+    /** Joystick information **/
+    this->axisCount = joystick->getNrAxis();
+    this->buttonCount = joystick->getNrButtons();
+
+    /** Get the configuration information. It requires a proper configuration **/
+    this->axisScale = _axisScale.get();
+    assert(axisScale.size() == static_cast<unsigned int> (this->axisCount));
+
     return true;
 }
 
@@ -51,80 +55,21 @@ bool JoystickTask::startHook()
 {
     if (! JoystickTaskBase::startHook())
         return false;
-    
+
     RTT::extras::FileDescriptorActivity* activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
     if (activity)
     {
 	activity->watch(joystick->getFileDescriptor());
     }
-    
-    return true;
-}
-
-
-bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
-
-    assert(_axisScale.get().size() == 4);
-    bool update = false;
-    // New data available at the Joystick device
-    while(this->joystick->updateState())
-    {
-	update = true;
-    }
-    
-//    if(!update)
-//	return false;
-    
-    rcmd.deviceIdentifier= this->joystick->getName();
-    
-    std::vector<double> axis;
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Forward)*_axisScale.get()[0]);
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Sideward)*_axisScale.get()[1]);
-    axis.push_back(this->joystick->getAxis(Joystick::AXIS_Turn)*_axisScale.get()[2]);
-    
-    std::vector<double> axis2;
-    axis2.push_back(this->joystick->getAxis(Joystick::AXIS_Slider)*_axisScale.get()[3]);
-    rcmd.axisValue.push_back(axis);
-    rcmd.axisValue.push_back(axis2);
-    
-    int buttonCount = this->joystick->getNrButtons();
-
-    // Set button bit list
-    for (int i = 0; i < buttonCount; i++)
-    {
-        rcmd.buttonValue.push_back(this->joystick->getButtonPressed(i));
-    }
-    
-    _raw_command.write(rcmd);
 
     return true;
-}
-
-void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd) {
-    base::MotionCommand2D mcmd;
-    if(rcmd.axisValue.size() != 2) return;
-    if(rcmd.axisValue[0].size() != 3) return;
-    if(rcmd.axisValue[1].size() != 1) return;
-
-    float max_speed = _maxSpeed.get();
-    float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.axisValue[1][0] * min_speed) / (1.0 + min_speed);
-    float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.axisValue[0][0] * max_speed * max_speed_ratio;
-    double y = rcmd.axisValue[0][1];
-    
-    mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
-    mcmd.translation = x;
-    
-    // Send motion command
-    _motion_command.write(mcmd);
 }
 
 void JoystickTask::updateHook()
 {
     JoystickTaskBase::updateHook();
-     
+
     RawCommand rcmd;
 
     if (!updateRawCommand(rcmd)) return;
@@ -142,3 +87,88 @@ void JoystickTask::stopHook()
 
     JoystickTaskBase::stopHook();
 }
+bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
+
+    bool update = false;
+
+    /** New data available at the Joystick device **/
+    while(this->joystick->updateState())
+    {
+	update = true;
+    }
+
+    /** Device name **/
+    rcmd.deviceIdentifier= this->joystick->getName();
+
+    /** Axis mapping **/
+    rcmd.axes.names = this->joystick->getMapAxis();
+    register size_t l = 0;
+    std::vector<double> axes_value = this->joystick->getAxes();
+    for(std::vector<double>::iterator it=axes_value.begin(); it!=axes_value.end(); ++it)
+    {
+        rcmd.axes.elements.push_back((*it)*axisScale[l]);
+        l++;
+    }
+
+    /** Buttons mapping **/
+    rcmd.buttons.names = this->joystick->getMapButtons();
+    std::vector<bool> buttons_value = this->joystick->getButtons();
+    for(std::vector<bool>::iterator it=buttons_value.begin(); it!=buttons_value.end(); ++it)
+    {
+        rcmd.buttons.elements.push_back(static_cast<int>(*it));
+    }
+
+    /** Time stamp **/
+    rcmd.time = base::Time::now();
+
+    /** Write in the port **/
+    _raw_command.write(rcmd);
+
+    return update;
+}
+
+/** This is a simple/generic 2D command generator each subclass should have its own one **/
+void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd)
+{
+    base::MotionCommand2D mcmd;
+
+    /** At least two axes to command a 2D motion **/
+    if(rcmd.axes.size() < 2) return;
+
+    /** Configuration values **/
+    float max_speed = _maxSpeed.get();
+    float min_speed = _minSpeed.get();
+    float max_rotation_speed = _maxRotationSpeed.get();
+
+    /** Speed ratio only it has a throttle absolute axis (ABS)**/
+    float max_speed_ratio;
+    try
+    {
+        /** In linux/input.h and used by the controldev library defines the ABS_THROTTLE **/
+        double throttle = rcmd.axes[abs2str(6)];
+
+        /** Throttle between 0  and 1**/
+        max_speed_ratio = 0.5 + (throttle/2.0);
+
+       //What was max_speed ratio before ??
+       // max_speed_ratio = (rcmd.axes[abs2str(6)] * min_speed) / (1.0 + min_speed);
+    }
+    catch (const std::runtime_error& error)
+    {
+        /** TO-DO: perhaps write in the RTT log that there is not a throttle axis **/
+        max_speed_ratio = 1.0;
+    }
+
+    /** Get the x-y information. TO-DO: it could also be accessed by name **/
+    double x = rcmd.axes[1] * max_speed * max_speed_ratio;
+    double y = rcmd.axes[0];
+
+    /** Calculate the 2D command **/
+    mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
+    mcmd.translation = x;
+
+    /** Send motion command **/
+    _motion_command.write(mcmd);
+}
+
+
