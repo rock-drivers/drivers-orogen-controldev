@@ -51,6 +51,10 @@ task_context "JoystickTask" do
         doc("Path to the joystick device")
 
     property("axisScaling","/std/vector<double>")
+    property("names_for_joints_command","/std/vector<std/string>")
+
+    output_port("joints_command", "base/commands/Joints").
+        doc("Port for joint motion commands")
 end
 
 task_context "Mouse3DTask" do

@@ -13,9 +13,11 @@ namespace controldev {
 	friend class JoystickTaskBase;
     protected:
         Joystick *joystick;
+        base::commands::Joints joints_cmd_out_;
 
         virtual bool updateRawCommand(RawCommand& rcmd);
         void sendMotionCommand2D(const RawCommand& rcmd);
+        void sendJointsCommand(const RawCommand& rcmd);
 
     public:
         JoystickTask(std::string const& name = "controldev::JoystickTask");
