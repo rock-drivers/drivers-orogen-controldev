@@ -96,6 +96,8 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
         rcmd.buttonValue.push_back(this->joystick->getButtonPressed(i));
     }
     
+    rcmd.time = base::Time::now();
+
     _raw_command.write(rcmd);
 
     return true;
