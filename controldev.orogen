@@ -53,6 +53,18 @@ task_context "JoystickTask" do
     property("axisScaling","/std/vector<double>")
 end
 
+task_context "JoyPadTask" do
+    subclasses "GenericTask"
+
+    doc("A Task that provides a driver for JoyPad")
+
+    default_activity :fd_driven
+    needs_configuration
+
+    property("device", "/std/string", "/dev/input/js0").
+        doc("Path to the joypad device")
+end
+
 task_context "Mouse3DTask" do
     subclasses "GenericTask"
 
@@ -107,6 +119,13 @@ end
 
 deployment "joystick" do
     task('joystick', 'controldev::JoystickTask').
+       realtime.
+       priority(25)
+
+    add_default_logger
+end
+deployment "joypad" do
+    task('joypad', 'controldev::JoyPadTask').
        realtime.
        priority(25)
 
