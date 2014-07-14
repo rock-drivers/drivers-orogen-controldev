@@ -111,7 +111,7 @@ void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd) {
 
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.axisValue[1][0] * min_speed) / (1.0 + min_speed);
+    float max_speed_ratio = 1.0 ;//(rcmd.axisValue[1][0] * min_speed) / (1.0 + min_speed);
     float max_rotation_speed = _maxRotationSpeed.get();
     double x = rcmd.axisValue[1][0] * max_speed * max_speed_ratio;
     double y = rcmd.axisValue[0][1];
