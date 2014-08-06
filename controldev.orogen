@@ -10,31 +10,10 @@ import_types_from "canbus"
 task_context "GenericTask" do
     abstract
 
-    property("minSpeed", "double", -1.5).
-	doc("Minimum translation speed in m/s")
-
-    property("maxSpeed", "double", 1.5).
-	doc("Maximum translation speed in m/s")
-
-    property("minRotationSpeed", "double", -Math::PI).
-	doc("Minimum rotation speed in rad/s")
-
-    property("maxRotationSpeed", "double", Math::PI).
-	doc("Maximum rotation speed in rad/s")
-
     property("axisScale","/std/vector<double>")
 
     output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
-
-    output_port("four_wheel_command", "controldev/FourWheelCommand").
-        doc("command that specifies the speed for the four wheels")
-
-    output_port("motion_command", "base/MotionCommand2D").
-        doc("Port for motion command structures (translation, rotation)")
-
-    output_port("speed_command", "base/SpeedCommand6D").
-        doc("Port for 6-dof speed command structures (surge, sway, heave - roll, pitch, yaw)")
 
 end
 
@@ -51,7 +30,6 @@ task_context "JoystickTask" do
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
 
-    property("axisScaling","/std/vector<double>")
 end
 
 task_context "Mouse3DTask" do
@@ -83,6 +61,43 @@ task_context "SliderboxTask" do
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
+end
+
+# This task converts Raw commands like them they are generated from the Joystick
+# To Motion Command2D for direct Robot control
+task_context "RawJoystickToMotion2D" do
+    property("minSpeed", "double", -1.5).
+	doc("Minimum translation speed in m/s")
+
+    property("maxSpeed", "double", 1.5).
+	doc("Maximum translation speed in m/s")
+
+    property("maxRotationSpeed", "double", Math::PI).
+	doc("Maximum rotation speed in rad/s")
+
+    input_port("raw_command", "controldev/RawCommand")
+    
+    output_port("motion_command", "base/MotionCommand2D")
+    
+    port_driven :raw_command
+end
+
+# This task converts Raw commands like them they are generated from the Joystick
+# To Motion Command2D for direct Robot control
+task_context "RawWheelToMotion2D" do
+    property("minSpeed", "double", -1.5).
+	doc("Minimum translation speed in m/s")
+
+    property("maxSpeed", "double", 1.5).
+	doc("Maximum translation speed in m/s")
+
+    property("maxRotationSpeed", "double", Math::PI).
+	doc("Maximum rotation speed in rad/s")
+
+    input_port("raw_command", "controldev/RawCommand")
+    output_port("motion_command", "base/MotionCommand2D")
+
+    port_driven :raw_command
 end
 
 if has_typekit?('canbus')

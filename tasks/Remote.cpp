@@ -5,10 +5,6 @@ using namespace controldev;
 Remote::Remote(std::string const& name) :
     RemoteBase(name)
 {
-    // Set max/min speed to respectively 0.5 m/s and 0.1 m/s
-    _maxSpeed.set(1.5);
-    _minSpeed.set(0.1);
-    _maxRotationSpeed.set(M_PI);
 }
 
 /// The following lines are template definitions for the various state machine

@@ -87,18 +87,6 @@ void SteeringWheelTask::updateHook()
     rcmd.axisValue[0][3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
     rcmd.axisValue[0][4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
-    float max_speed = _maxSpeed.get();
-    float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.axisValue[0][3] + min_speed) / (1.0 + min_speed);
-    float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.axisValue[0][3]  * max_speed;
-    double y = rcmd.axisValue[0][1];
-
-    mcmd.rotation = y;
-    mcmd.translation = x;
-    
-    // Send motion command
-    _motion_command.write(mcmd);
 
     int buttonCount = steerControl->getNrButtons();
     

@@ -101,36 +101,13 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
     return true;
 }
 
-void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd) {
-    base::MotionCommand2D mcmd;
-    if(rcmd.axisValue.size() != 2) return;
-    if(rcmd.axisValue[0].size() != 3) return;
-    if(rcmd.axisValue[1].size() != 1) return;
-
-    float max_speed = _maxSpeed.get();
-    float min_speed = _minSpeed.get();
-    float max_speed_ratio = (rcmd.axisValue[1][0] * min_speed) / (1.0 + min_speed);
-    float max_rotation_speed = _maxRotationSpeed.get();
-    double x = rcmd.axisValue[0][0] * max_speed * max_speed_ratio;
-    double y = rcmd.axisValue[0][1];
-    
-    mcmd.rotation    = -fabs(y) * atan2(y, fabs(x)) / M_PI * max_rotation_speed;
-    mcmd.translation = x;
-    
-    // Send motion command
-    _motion_command.write(mcmd);
-}
 
 void JoystickTask::updateHook()
 {
     JoystickTaskBase::updateHook();
      
     RawCommand rcmd;
-
-    if (!updateRawCommand(rcmd)) return;
-
-    sendMotionCommand2D(rcmd);
-
+    updateRawCommand(rcmd);
 }
 
 void JoystickTask::stopHook()
