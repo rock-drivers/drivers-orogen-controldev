@@ -32,6 +32,20 @@ task_context "JoystickTask" do
 
 end
 
+task_context "JoyPadTask" do
+    subclasses "GenericTask"
+
+    doc("A Task that provides a driver for JoyPad")
+
+    #default_activity :fd_driven
+    needs_configuration
+
+    periodic 0.1
+
+    property("device", "/std/string", "/dev/input/js0").
+        doc("Path to the joypad device")
+end
+
 task_context "Mouse3DTask" do
     subclasses "GenericTask"
 
