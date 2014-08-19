@@ -10,7 +10,6 @@ namespace controldev {
     {
 	friend class GenericTaskBase;
     protected:
-	bool mapFromSliderbox(FourWheelCommand& cmd, RawCommand const& input);
 
     public:
         GenericTask(std::string const& name = "controldev::GenericTask", TaskCore::TaskState initial_state = Stopped);
