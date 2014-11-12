@@ -50,7 +50,8 @@ void GenericRawToMotion2D::updateHook()
         double rot_raw   = rcmd.axisValue[rot_axis][rot_subaxis];
 
         mcmd.translation = fabs(trans_raw) < _translation_axis_deadzone ? 0.0 : trans_raw * _maxSpeed;
-        mcmd.rotation = fabs(rot_raw) < _rotation_axis_deadzone ? 0.0 : rot_raw * _maxRotationSpeed;
+        double w = (trans_raw < 0.0) ? rot_raw * _maxRotationSpeed : - rot_raw * _maxRotationSpeed;
+        mcmd.rotation = fabs(rot_raw) < _rotation_axis_deadzone ? 0.0 : w;
         _motion_command.write(mcmd);
     }
 
