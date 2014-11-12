@@ -115,14 +115,14 @@ task_context "RawWheelToMotion2D" do
 end
 
 # This task converts controldev/RawCommand to base/MotionCommand2D
-# with configurable axes
+# with configurable axes, ranges and deadzones
 task_context "GenericRawToMotion2D" do
-    property "translation_axis", "/std/vector<int>"
-    property "rotation_axis", "/std/vector<int>"
-    property "maxSpeed", "double", 1.0
-    property "maxRotationSpeed", "double", Math::PI / 2
-    property "translation_axis_deadzone", "double", 0.02
-    property "rotation_axis_deadzone", "double", 0.02
+    property("translation_axis", "/std/vector<int>").doc("Translation axis as reported by controldev(main and sub axis)")
+    property("rotation_axis", "/std/vector<int>").doc("Rotation axis as reported by controldev(main and sub axis)")
+    property("maxSpeed", "double", 1.0).doc("Maximum speed in m/s")
+    property("maxRotationSpeed", "double", Math::PI / 2).doc("Maximum rotational velocity in rad/s")
+    property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
+    property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
 
     input_port "raw_command", "controldev/RawCommand"
     output_port "motion_command", "base/MotionCommand2D"
