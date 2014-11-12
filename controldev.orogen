@@ -114,6 +114,23 @@ task_context "RawWheelToMotion2D" do
     port_driven :raw_command
 end
 
+# This task converts controldev/RawCommand to base/MotionCommand2D
+# with configurable axes
+task_context "GenericRawToMotion2D" do
+    property "translation_axis", "/std/vector<int>"
+    property "rotation_axis", "/std/vector<int>"
+    property "maxSpeed", "double", 1.0
+    property "maxRotationSpeed", "double", Math::PI / 2
+    property "translation_axis_deadzone", "double", 0.02
+    property "rotation_axis_deadzone", "double", 0.02
+
+    input_port "raw_command", "controldev/RawCommand"
+    output_port "motion_command", "base/MotionCommand2D"
+
+    port_driven :raw_command
+end
+     
+
 if has_typekit?('canbus')
 import_types_from "canbus"
 task_context "Remote" do
