@@ -3,6 +3,7 @@ version '1.0'
 
 using_library 'controldev'
 using_task_library 'canbus'
+using_task_library "iodrivers_base"
 
 import_types_from 'base'
 import_types_from 'canbus'
@@ -84,3 +85,12 @@ task_context "Remote", subclasses: 'GenericTask' do
     port_driven
 end
 
+# A Task that provides a driver for a Graupner MC20
+task_context "GraupnerMC20Task", subclasses: "iodrivers_base::Task" do
+    needs_configuration
+
+    # Port for raw command structures (composed of joystick and sliderbox values)
+    output_port("raw_command", "controldev/RawCommand")
+
+    periodic 0.1
+end

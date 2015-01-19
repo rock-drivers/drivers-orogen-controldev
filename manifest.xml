@@ -13,6 +13,8 @@
   <depend package="drivers/controldev"/>
   <depend package="drivers/orogen/canbus" optional="1"/>
   <depend package="base/orogen/types"/>
+  <depend package="drivers/orogen/iodrivers_base"/>
+
   <depend package="tools/logger"/>
   <depend package="orogen"/>
   <!--tags>stable</tags-->
