@@ -73,10 +73,12 @@ void GraupnerMC20Task::processIO()
 
     rcmd.axisValue.push_back(axis);
     rcmd.axisValue.push_back(axis2);
-    rcmd.buttonValue.resize(9)
-    for (int i=0; i<=9; i++){
-        if (out.channel[i+7] > 14000){
-            rcmd.buttonValue[
+    rcmd.buttonValue.resize(9, 0);
+    for (int i=0; i < 9; i++)
+    {
+        if (out.channel[i+7] > 14000)
+        {
+            rcmd.buttonValue[i] = 1;
         }
     }
     _raw_command.write(rcmd);
