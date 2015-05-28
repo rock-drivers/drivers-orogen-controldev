@@ -1,6 +1,7 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.cpp */
 
 #include "RawJoystickToMotion2D.hpp"
+#include <base/samples/CommandSamples.hpp>
 
 using namespace controldev;
 
@@ -19,7 +20,7 @@ RawJoystickToMotion2D::~RawJoystickToMotion2D()
 }
 
 void RawJoystickToMotion2D::sendMotionCommand2D(const RawCommand& rcmd) {
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
     if(rcmd.axisValue.size() != 2) return;
     if(rcmd.axisValue[0].size() != 3) return;
     if(rcmd.axisValue[1].size() != 1) return;

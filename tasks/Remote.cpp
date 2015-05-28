@@ -1,5 +1,7 @@
 #include "Remote.hpp"
 #include <iostream>
+#include <base/samples/CommandSamples.hpp>
+
 using namespace controldev;
 
 Remote::Remote(std::string const& name) :
@@ -20,7 +22,7 @@ bool Remote::configureHook()
 
 void Remote::updateHook()
 {
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
 
     canbus::Message msg;
     int currentbit;

@@ -5,6 +5,7 @@
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include <unistd.h>
 #include <fcntl.h>
+#include <base/samples/CommandSamples.hpp>
 
 using namespace controldev;
 
@@ -62,7 +63,7 @@ void SteeringWheelTask::updateHook()
 {
     SteeringWheelTaskBase::updateHook();
     
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
     
     RawCommand rcmd;
     

@@ -1,6 +1,7 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.cpp */
 
 #include "RawWheelToMotion2D.hpp"
+#include <base/samples/CommandSamples.hpp>
 
 using namespace controldev;
 
@@ -19,7 +20,7 @@ RawWheelToMotion2D::~RawWheelToMotion2D()
 }
 
 void RawWheelToMotion2D::sendMotionCommand2D(const RawCommand& rcmd) {
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
     float max_speed = _maxSpeed.get();
     float min_speed = _minSpeed.get();
     float max_speed_ratio = (rcmd.axisValue[0][3] + min_speed) / (1.0 + min_speed);
