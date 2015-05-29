@@ -1,6 +1,7 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.cpp */
 
 #include "GenericRawToMotion2D.hpp"
+#include <base/samples/CommandSamples.hpp>
 
 using namespace controldev;
 
@@ -39,7 +40,7 @@ bool GenericRawToMotion2D::startHook()
 void GenericRawToMotion2D::updateHook()
 {
     RawCommand rcmd;
-    base::MotionCommand2D  mcmd;
+    base::commands::Motion2D  mcmd;
     if(_raw_command.read(rcmd) == RTT::NewData){
         int trans_axis = _translation_axis.get().at(0);
         int trans_subaxis = _translation_axis.get().at(1);
