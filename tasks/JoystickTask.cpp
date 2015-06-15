@@ -3,6 +3,7 @@
 #include "JoystickTask.hpp"
 #include <controldev/Joystick.hpp>
 #include <rtt/extras/FileDescriptorActivity.hpp>
+#include <base/motion_command.h>
 
 using namespace controldev;
 

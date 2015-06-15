@@ -1,4 +1,5 @@
 #include "Remote.hpp"
+#include <base/motion_command.h>
 
 using namespace controldev;
 

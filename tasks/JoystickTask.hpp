@@ -4,6 +4,7 @@
 #define CONTROLDEV_JOYSTICKTASK_TASK_HPP
 
 #include "controldev/JoystickTaskBase.hpp"
+#include <base/commands/Joints.hpp>
 
 namespace controldev {
     class Joystick;
