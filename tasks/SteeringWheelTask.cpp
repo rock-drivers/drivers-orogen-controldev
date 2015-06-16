@@ -5,6 +5,7 @@
 #include <rtt/extras/FileDescriptorActivity.hpp>
 #include <unistd.h>
 #include <fcntl.h>
+#include <base/motion_command.h>
 
 using namespace controldev;
 
