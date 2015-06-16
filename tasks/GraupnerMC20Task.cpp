@@ -71,6 +71,17 @@ void GraupnerMC20Task::processIO()
     axis2.push_back((out.channel[5]-12000)/3200.0);
     axis2.push_back((out.channel[6]-12000)/3200.0);
 
+    for(unsigned i = 0; i < axis.size(); i++)
+    {
+        if (std::abs(axis[i]) <= 0.01)
+            axis[i] = 0.0;
+    }
+    for(unsigned i = 0; i < axis2.size(); i++)
+    {
+        if (std::abs(axis2[i]) <= 0.01)
+            axis2[i] = 0.0;
+    }
+
     rcmd.axisValue.push_back(axis);
     rcmd.axisValue.push_back(axis2);
     rcmd.buttonValue.resize(9, 0);
