@@ -3,6 +3,8 @@
 
 #include "controldev/RemoteBase.hpp"
 
+#include <base/commands/Motion2D.hpp>
+
 #include <vector>
 
 namespace controldev {

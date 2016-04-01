@@ -130,7 +130,7 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
 /** This is a simple/generic 2D command generator each subclass should have its own one **/
 void JoystickTask::sendMotionCommand2D(const RawCommand& rcmd)
 {
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
 
     /** At least two axes to command a 2D motion **/
     if(rcmd.axes.size() < 2) return;

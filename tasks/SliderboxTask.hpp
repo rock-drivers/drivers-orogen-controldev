@@ -5,6 +5,8 @@
 
 #include "controldev/SliderboxTaskBase.hpp"
 
+#include <base/commands/Motion2D.hpp>
+
 namespace controldev {
     class SliderBox;
     class SliderboxTask : public SliderboxTaskBase

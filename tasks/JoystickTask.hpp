@@ -3,6 +3,7 @@
 #ifndef CONTROLDEV_JOYSTICKTASK_TASK_HPP
 #define CONTROLDEV_JOYSTICKTASK_TASK_HPP
 
+#include <base/commands/Motion2D.hpp>
 #include "controldev/JoystickTaskBase.hpp"
 
 namespace controldev {

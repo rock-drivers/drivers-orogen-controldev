@@ -23,7 +23,7 @@ bool Remote::configureHook()
 
 void Remote::updateHook()
 {
-    base::MotionCommand2D mcmd;
+    base::commands::Motion2D mcmd;
     RawCommand rcmd;
 
     canbus::Message msg;
