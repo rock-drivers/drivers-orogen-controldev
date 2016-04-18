@@ -1,6 +1,7 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.cpp */
 
 #include "GenericRawToMotion2D.hpp"
+#include <base/samples/CommandSamples.hpp>
 
 using namespace controldev;
 
