@@ -27,7 +27,7 @@ with configurable axes
 	friend class GenericRawToMotion2DBase;
     protected:
 
-
+    base::MotionCommand2D  mcmd;
 
     public:
         /** TaskContext constructor for GenericRawToMotion2D
