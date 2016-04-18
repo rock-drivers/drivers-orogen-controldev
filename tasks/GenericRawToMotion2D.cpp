@@ -101,8 +101,8 @@ void GenericRawToMotion2D::updateHook()
                 // limit rotation speed
                 mcmd.rotation = mcmd.rotation < 0.0 ? std::max(mcmd.rotation, -_maxRotationSpeed.get()) : std::min(mcmd.rotation, _maxRotationSpeed.get());
             }
-            _motion_command.write(mcmd);
         }
+        _motion_command.write(mcmd);
     }
 
     GenericRawToMotion2DBase::updateHook();
