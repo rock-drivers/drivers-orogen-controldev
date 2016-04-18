@@ -122,13 +122,13 @@ task_context "GenericRawToMotion2D" do
     property("maxSpeed", "double", 1.0).doc("Maximum speed in m/s")
     property("maxRotationSpeed", "double", Math::PI / 2).doc("Maximum rotational velocity in rad/s")
     property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
+    property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
     property("acceleration_mode", "bool", false).doc("in acceleration mode, the input is interpreted as speed change")
 
     # following properties are just used in acceleration mode
     property("stop_button", "int", -1).doc("Button number as reported by controldev to stop the entire motion")
     property("stop_translation_button", "int", -1).doc("Button number as reported by controldev to set the translational part to zero")
     property("stop_rotation_button", "int", -1).doc("Button number as reported by controldev to set the rotational part to zero")
-    property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
     property("maxAcceleration", "double", 0.001).doc("Maximum acceleartion in m/s/period")
     property("maxRotationAcceleration", "double", 0.001).doc("Maximum rotational acceleartion in rad/s/period")
 
