@@ -35,6 +35,9 @@ bool GenericRawToMotion2D::startHook()
 {
     if (! GenericRawToMotion2DBase::startHook())
         return false;
+
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
     return true;
 }
 void GenericRawToMotion2D::updateHook()
@@ -50,7 +53,7 @@ void GenericRawToMotion2D::updateHook()
         rot_raw = fabs(rot_raw) < _rotation_axis_deadzone ? 0.0 : rot_raw;
 
 
-        if(!_acceleration_mode){
+        if (!_acceleration_mode) {
             mcmd.translation = trans_raw * _maxSpeed;
             mcmd.rotation = (trans_raw < 0.0) ? rot_raw * _maxRotationSpeed : - rot_raw * _maxRotationSpeed;
             _motion_command.write(mcmd);
@@ -58,41 +61,48 @@ void GenericRawToMotion2D::updateHook()
         }
 
         /* stop if stop button was pressed */
-        uint8_t stop_button = rcmd.buttonValue[_stop_button.get()];
-        if (stop_button == 1) {
-            mcmd.translation = 0.0;
-            mcmd.rotation = 0.0;
-            _motion_command.write(mcmd);
-            return;
+        int button_cnt = rcmd.buttonValue.size();
+        if (_stop_button.get() < button_cnt) {
+            uint8_t stop_button = rcmd.buttonValue[_stop_button.get()];
+            if (stop_button == 1) {
+                mcmd.translation = 0.0;
+                mcmd.rotation = 0.0;
+                _motion_command.write(mcmd);
+                return;
+            }
         }
 
         /* handle the translational part */
-        uint8_t stop_translation_button = rcmd.buttonValue[_stop_translation_button.get()];
-        if (stop_translation_button == 1) {
-            mcmd.translation = 0.0;
-        } else {
-            // just accelerate when input values exceed deadzone
-            mcmd.translation += trans_raw * _maxAcceleration;
+        if (_stop_translation_button.get() < button_cnt) {
+            uint8_t stop_translation_button = rcmd.buttonValue[_stop_translation_button.get()];
+            if (stop_translation_button == 1) {
+                mcmd.translation = 0.0;
+            } else {
+                // just accelerate when input values exceed deadzone
+                mcmd.translation += trans_raw * _maxAcceleration;
 
-            // limit translation speed
-            mcmd.translation = (mcmd.translation < 0.0) ? std::max(-_maxSpeed.get(), mcmd.translation) : std::min(_maxSpeed.get(), mcmd.translation);
+                // limit translation speed
+                mcmd.translation = (mcmd.translation < 0.0) ? std::max(-_maxSpeed.get(), mcmd.translation) : std::min(_maxSpeed.get(), mcmd.translation);
+            }
         }
 
         /* handle the rotational part */
-        uint8_t stop_rotation_button = rcmd.buttonValue[_stop_rotation_button.get()];
-        if (stop_rotation_button == 1) {
-            mcmd.rotation = 0.0;
-        } else {
-            // just accelerate when input values exceed deadzone
-            double acc = rot_raw * _maxRotationAcceleration.get();
+        if (_stop_rotation_button.get() < button_cnt) {
+            uint8_t stop_rotation_button = rcmd.buttonValue[_stop_rotation_button.get()];
+            if (stop_rotation_button == 1) {
+                mcmd.rotation = 0.0;
+            } else {
+                // just accelerate when input values exceed deadzone
+                double acc = rot_raw * _maxRotationAcceleration.get();
 
-            // reverse rotation acceleration when going backwards
-            mcmd.rotation = (trans_raw < 0.0) ? mcmd.rotation + acc : mcmd.rotation - acc;
+                // reverse rotation acceleration when going backwards
+                mcmd.rotation = (trans_raw < 0.0) ? mcmd.rotation + acc : mcmd.rotation - acc;
 
-            // limit rotation speed
-            mcmd.rotation = mcmd.rotation < 0.0 ? std::max(mcmd.rotation, -_maxRotationSpeed.get()) : std::min(mcmd.rotation, _maxRotationSpeed.get());
+                // limit rotation speed
+                mcmd.rotation = mcmd.rotation < 0.0 ? std::max(mcmd.rotation, -_maxRotationSpeed.get()) : std::min(mcmd.rotation, _maxRotationSpeed.get());
+            }
+            _motion_command.write(mcmd);
         }
-        _motion_command.write(mcmd);
     }
 
     GenericRawToMotion2DBase::updateHook();
