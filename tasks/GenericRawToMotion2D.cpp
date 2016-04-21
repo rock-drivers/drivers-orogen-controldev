@@ -117,13 +117,25 @@ void GenericRawToMotion2D::updateHook()
 }
 void GenericRawToMotion2D::errorHook()
 {
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
+    _motion_command.write(mcmd);
+
     GenericRawToMotion2DBase::errorHook();
 }
 void GenericRawToMotion2D::stopHook()
 {
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
+    _motion_command.write(mcmd);
+
     GenericRawToMotion2DBase::stopHook();
 }
 void GenericRawToMotion2D::cleanupHook()
 {
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
+    _motion_command.write(mcmd);
+
     GenericRawToMotion2DBase::cleanupHook();
 }
