@@ -122,6 +122,7 @@ void GenericRawToMotion2D::errorHook()
     mcmd.translation = 0.0;
     mcmd.rotation = 0.0;
     _motion_command.write(mcmd);
+
     GenericRawToMotion2DBase::errorHook();
 }
 void GenericRawToMotion2D::stopHook()
