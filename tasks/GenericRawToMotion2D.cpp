@@ -52,6 +52,8 @@ void GenericRawToMotion2D::updateHook()
         trans_raw = fabs(trans_raw) < _translation_axis_deadzone ? 0.0 : trans_raw;
         rot_raw = fabs(rot_raw) < _rotation_axis_deadzone ? 0.0 : rot_raw;
 
+        trans_raw *= _translation_scale.get();
+        rot_raw *= _rotation_scale.get();
 
         if (!_acceleration_mode) {
             mcmd.translation = trans_raw * _maxSpeed;
@@ -117,10 +119,17 @@ void GenericRawToMotion2D::updateHook()
 }
 void GenericRawToMotion2D::errorHook()
 {
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
+    _motion_command.write(mcmd);
     GenericRawToMotion2DBase::errorHook();
 }
 void GenericRawToMotion2D::stopHook()
 {
+    mcmd.translation = 0.0;
+    mcmd.rotation = 0.0;
+    _motion_command.write(mcmd);
+
     GenericRawToMotion2DBase::stopHook();
 }
 void GenericRawToMotion2D::cleanupHook()
