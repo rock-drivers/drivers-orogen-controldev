@@ -26,8 +26,6 @@ with configurable axes
     {
 	friend class GenericRawToMotion2DBase;
     protected:
-	static const bool debug = false;
-
 
     public:
         /** TaskContext constructor for GenericRawToMotion2D
