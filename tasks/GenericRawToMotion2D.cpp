@@ -65,9 +65,6 @@ void GenericRawToMotion2D::updateHook()
 	mcmd.heading = head_Y_raw == 0 && head_X_raw == 0 ? base::Angle::fromRad(0) : base::Angle::fromRad(atan2(head_X_raw, head_Y_raw));
 
         mcmd.rotation = rot_raw * _maxRotationSpeed;        
-	if(mcmd.translation == 0){	//Weird Bug
-		//mcmd.rotation *= -1;
-	}
 
         _motion_command.write(mcmd);
     }
