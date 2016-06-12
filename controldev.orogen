@@ -118,7 +118,7 @@ end
 # with configurable axes, ranges and deadzones
 task_context "GenericRawToMotion2D" do
     property("rotation_axis", "/std/vector<int>").doc("Rotation axis as reported by controldev(main and sub axis)")
-    property("heading_axis_x", "/std/vector<int>").doc("heading X (Translation is length of Vector between x,y)")
+    property("heading_axis_x", "/std/vector<int>").doc("heading X (Heading is Angle of Vector between x,y)")
     property("heading_axis_y", "/std/vector<int>").doc("heading Y (Heading is Angle of Vector between x,y)")
     property("translation_axis", "/std/vector<int>").doc("Translation Axis")
     property("invert_rotation_axis", "bool", 0).doc("Invert Axis, default false")
