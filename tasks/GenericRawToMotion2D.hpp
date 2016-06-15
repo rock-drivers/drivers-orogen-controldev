@@ -27,8 +27,6 @@ with configurable axes
 	friend class GenericRawToMotion2DBase;
     protected:
 
-
-
     public:
         /** TaskContext constructor for GenericRawToMotion2D
          * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.

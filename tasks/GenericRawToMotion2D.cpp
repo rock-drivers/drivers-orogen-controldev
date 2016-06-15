@@ -2,6 +2,7 @@
 
 #include "GenericRawToMotion2D.hpp"
 #include <base/samples/CommandSamples.hpp>
+#include <base/Angle.hpp>
 
 using namespace controldev;
 
@@ -42,17 +43,29 @@ void GenericRawToMotion2D::updateHook()
     RawCommand rcmd;
     base::commands::Motion2D  mcmd;
     if(_raw_command.read(rcmd) == RTT::NewData){
-        int trans_axis = _translation_axis.get().at(0);
-        int trans_subaxis = _translation_axis.get().at(1);
+        double head_X_raw = rcmd.axisValue[_heading_axis_x.get().at(0)][_heading_axis_x.get().at(1)];
+	double head_Y_raw = rcmd.axisValue[_heading_axis_y.get().at(0)][_heading_axis_y.get().at(1)];
+        double rot_raw    = rcmd.axisValue[_rotation_axis.get().at(0)][_rotation_axis.get().at(1)];
+        double trans_raw  = rcmd.axisValue[_translation_axis.get().at(0)][_translation_axis.get().at(1)];
 
-        int rot_axis = _rotation_axis.get().at(0);
-        int rot_subaxis = _rotation_axis.get().at(1);
-        double trans_raw = rcmd.axisValue[trans_axis][trans_subaxis];
-        double rot_raw   = rcmd.axisValue[rot_axis][rot_subaxis];
+	rot_raw = fabs(rot_raw) < _rotation_axis_deadzone ? 0 : rot_raw;
+	head_X_raw = fabs(head_X_raw) < _heading_axis_x_deadzone ? 0 : head_X_raw;
+	head_Y_raw = fabs(head_Y_raw) < _heading_axis_y_deadzone ? 0 : head_Y_raw;
+	trans_raw = fabs(trans_raw) < _translation_axis_deadzone ? 0 : trans_raw;
+	
 
-        mcmd.translation = fabs(trans_raw) < _translation_axis_deadzone ? 0.0 : trans_raw * _maxSpeed;
-        double w = (trans_raw < 0.0) ? rot_raw * _maxRotationSpeed : - rot_raw * _maxRotationSpeed;
-        mcmd.rotation = fabs(rot_raw) < _rotation_axis_deadzone ? 0.0 : w;
+	rot_raw  *= _invert_rotation_axis ? -1 : 1;
+	head_X_raw *= _invert_heading_axis_x ? -1 : 1;
+	head_Y_raw *= _invert_heading_axis_y ? -1 : 1;
+	trans_raw *= _invert_translation_axis ? -1 : 1;
+
+
+	mcmd.translation = trans_raw * _maxSpeed;
+
+	mcmd.heading = head_Y_raw == 0 && head_X_raw == 0 ? base::Angle::fromRad(0) : base::Angle::fromRad(atan2(head_X_raw, head_Y_raw));
+
+        mcmd.rotation = rot_raw * _maxRotationSpeed;        
+
         _motion_command.write(mcmd);
     }
 

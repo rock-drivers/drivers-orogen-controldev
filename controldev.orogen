@@ -117,12 +117,20 @@ end
 # This task converts controldev/RawCommand to base/MotionCommand2D
 # with configurable axes, ranges and deadzones
 task_context "GenericRawToMotion2D" do
-    property("translation_axis", "/std/vector<int>").doc("Translation axis as reported by controldev(main and sub axis)")
     property("rotation_axis", "/std/vector<int>").doc("Rotation axis as reported by controldev(main and sub axis)")
+    property("heading_axis_x", "/std/vector<int>").doc("heading X (Heading is Angle of Vector between x,y)")
+    property("heading_axis_y", "/std/vector<int>").doc("heading Y (Heading is Angle of Vector between x,y)")
+    property("translation_axis", "/std/vector<int>").doc("Translation Axis")
+    property("invert_rotation_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_heading_axis_x", "bool", 0).doc("Invert Axis, default false")
+    property("invert_heading_axis_y", "bool", 0).doc("Invert Axis, default false")
+    property("invert_translation_axis", "bool", 0).doc("Invert Axis, default false")
     property("maxSpeed", "double", 1.0).doc("Maximum speed in m/s")
     property("maxRotationSpeed", "double", Math::PI / 2).doc("Maximum rotational velocity in rad/s")
-    property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
+    property("heading_axis_x_deadzone", "double", 0.02).doc("heading axis X deadzone (range 0-1)")
+    property("heading_axis_y_deadzone", "double", 0.02).doc("heading_axis Y deadzone (range 0-1)")
     property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
+    property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
 
     input_port "raw_command", "controldev/RawCommand"
     output_port "motion_command", "base/MotionCommand2D"
