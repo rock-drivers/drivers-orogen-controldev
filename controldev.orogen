@@ -91,7 +91,7 @@ task_context "RawJoystickToMotion2D" do
 
     input_port("raw_command", "controldev/RawCommand")
     
-    output_port("motion_command", "base/MotionCommand2D")
+    output_port("motion_command", "base/commands/Motion2D")
     
     port_driven :raw_command
 end
@@ -109,7 +109,7 @@ task_context "RawWheelToMotion2D" do
 	doc("Maximum rotation speed in rad/s")
 
     input_port("raw_command", "controldev/RawCommand")
-    output_port("motion_command", "base/MotionCommand2D")
+    output_port("motion_command", "base/commands/Motion2D")
 
     port_driven :raw_command
 end
@@ -133,7 +133,7 @@ task_context "GenericRawToMotion2D" do
     property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
 
     input_port "raw_command", "controldev/RawCommand"
-    output_port "motion_command", "base/MotionCommand2D"
+    output_port "motion_command", "base/commands/Motion2D"
 
     port_driven :raw_command
 end
