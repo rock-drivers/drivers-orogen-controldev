@@ -29,10 +29,10 @@ task_context "GenericTask" do
     output_port("four_wheel_command", "controldev/FourWheelCommand").
         doc("command that specifies the speed for the four wheels")
 
-    output_port("motion_command", "base/MotionCommand2D").
+    output_port("motion_command", "base/commands/Motion2D").
         doc("Port for motion command structures (translation, rotation)")
 
-    output_port("speed_command", "base/SpeedCommand6D").
+    output_port("speed_command", "base/commands/Speed6D").
         doc("Port for 6-dof speed command structures (surge, sway, heave - roll, pitch, yaw)")
 
 end
