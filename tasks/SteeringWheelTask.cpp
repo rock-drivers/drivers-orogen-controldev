@@ -79,14 +79,13 @@ void SteeringWheelTask::updateHook()
 
     rcmd.deviceIdentifier = steerControl->getName();
 
-    rcmd.axisValue.resize(1);
-    rcmd.axisValue[0].resize(5);
+    rcmd.axisValue.resize(5);
 
-    rcmd.axisValue[0][1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
-    rcmd.axisValue[0][0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
-    rcmd.axisValue[0][2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
-    rcmd.axisValue[0][3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
-    rcmd.axisValue[0][4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
+    rcmd.axisValue[1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
+    rcmd.axisValue[0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
+    rcmd.axisValue[2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
+    rcmd.axisValue[3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
+    rcmd.axisValue[4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
 
     int buttonCount = steerControl->getNrButtons();

@@ -43,10 +43,10 @@ void GenericRawToMotion2D::updateHook()
     RawCommand rcmd;
     base::commands::Motion2D  mcmd;
     if(_raw_command.read(rcmd) == RTT::NewData){
-        double head_X_raw = rcmd.axisValue[_heading_axis_x.get().at(0)][_heading_axis_x.get().at(1)];
-	double head_Y_raw = rcmd.axisValue[_heading_axis_y.get().at(0)][_heading_axis_y.get().at(1)];
-        double rot_raw    = rcmd.axisValue[_rotation_axis.get().at(0)][_rotation_axis.get().at(1)];
-        double trans_raw  = rcmd.axisValue[_translation_axis.get().at(0)][_translation_axis.get().at(1)];
+        double head_X_raw = rcmd.axisValue[_heading_axis_x.get()];
+	double head_Y_raw = rcmd.axisValue[_heading_axis_y.get()];
+        double rot_raw    = rcmd.axisValue[_rotation_axis.get()];
+        double trans_raw  = rcmd.axisValue[_translation_axis.get()];
 
 	rot_raw = fabs(rot_raw) < _rotation_axis_deadzone ? 0 : rot_raw;
 	head_X_raw = fabs(head_X_raw) < _heading_axis_x_deadzone ? 0 : head_X_raw;

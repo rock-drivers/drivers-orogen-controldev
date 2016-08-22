@@ -24,11 +24,10 @@ namespace controldev
          */
         base::Time time;
 
-        /* Index 1: num-of input axis, //index 2: dimensions of this axis
-         * If you have an gamepand which has 2 2Dknops you have an [2][2] 
-         * size'd array for an 3D Mouse you could have [1][6]
-         */
-        std::vector<std::vector<double> > axisValue;
+        /**
+         * Axis values, scaled betwen 0 and 1.
+         * */
+        std::vector<double> axisValue;
 
         /*
          * Switch/Key Values

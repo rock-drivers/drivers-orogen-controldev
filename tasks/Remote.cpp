@@ -47,8 +47,7 @@ void Remote::updateHook()
             current_slider = 0;
             rcmd.axisValue.clear();
             rcmd.buttonValue.clear();
-            rcmd.axisValue.push_back(std::vector<double>());
-	    rcmd.axisValue.at(0).resize(sliders,0.0);
+	    rcmd.axisValue.resize(sliders,0.0);
             rcmd.buttonValue.resize(buttons,0.0);
 	    buffered_char = 0;
 
@@ -76,8 +75,8 @@ void Remote::updateHook()
                 current_button++;
             } else if (current_slider < sliders){
                 if (buffered_charx == (resolution)){
-                    rcmd.axisValue.at(0).at(current_slider) = (buffered_char - 127)/100.0;
-                    printf("Writing to axis value: %i %i %f\n",current_slider,buffered_char, rcmd.axisValue.at(0).at(current_slider));
+                    rcmd.axisValue.at(current_slider) = (buffered_char - 127)/100.0;
+                    printf("Writing to axis value: %i %i %f\n",current_slider,buffered_char, rcmd.axisValue.at(current_slider));
                     buffered_char = 0;
                     buffered_charx = 0;
                     current_slider++;
