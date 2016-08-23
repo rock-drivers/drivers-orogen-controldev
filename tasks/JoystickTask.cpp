@@ -41,52 +41,30 @@ bool JoystickTask::configureHook()
     return true;
 }
 
-bool JoystickTask::startHook()
+int JoystickTask::getFileDescriptor()
 {
-    if (! JoystickTaskBase::startHook())
-        return false;
-    
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (activity)
-    {
-	activity->watch(joystick->getFileDescriptor());
-    }
-    
-    return true;
+    return joystick->getFileDescriptor();
 }
 
-
 bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
-    bool update = false;
     // New data available at the Joystick device
-    while(this->joystick->updateState())
+    while(joystick->updateState())
     {
-	update = true;
     }
     
-//    if(!update)
-//	return false;
+    rcmd.deviceIdentifier= joystick->getName();
     
-    rcmd.deviceIdentifier= this->joystick->getName();
+    rcmd.axisValue = joystick->getAxes();
     
-    rcmd.axisValue.clear();
-    for(size_t i = 0; i < joystick->getNrAxis(); i++)
-    {
-        rcmd.axisValue.push_back(joystick->getAxis(i));
-    }
-    
-    int buttonCount = this->joystick->getNrButtons();
+    size_t buttonCount = joystick->getNrButtons();
 
     // Set button bit list
-    for (int i = 0; i < buttonCount; i++)
+    for (size_t i = 0; i < buttonCount; i++)
     {
-        rcmd.buttonValue.push_back(this->joystick->getButtonPressed(i));
+        rcmd.buttonValue.push_back(joystick->getButtonPressed(i));
     }
     
     rcmd.time = base::Time::now();
-
-    _raw_command.write(rcmd);
 
     return true;
 }
@@ -98,14 +76,6 @@ void JoystickTask::updateHook()
      
     RawCommand rcmd;
     updateRawCommand(rcmd);
+    _raw_command.write(rcmd);
 }
 
-void JoystickTask::stopHook()
-{
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if(activity)
-        activity->clearAllWatches();
-
-    JoystickTaskBase::stopHook();
-}

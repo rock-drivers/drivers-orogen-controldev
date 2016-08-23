@@ -21,7 +21,10 @@ SliderboxTask::~SliderboxTask()
     delete sliderBox;
 }
 
-
+int SliderboxTask::getFileDescriptor()
+{
+    return sliderBox->getFileDescriptor();
+}
 
 /// The following lines are template definitions for the various state machine
 // hooks defined by Orocos::RTT. See SliderboxTask.hpp for more detailed
@@ -45,34 +48,16 @@ bool SliderboxTask::configureHook()
     return true;
 }
 
-bool SliderboxTask::startHook()
+bool SliderboxTask::updateRawCommand(RawCommand& rcmd)
 {
-    if (! SliderboxTaskBase::startHook())
-        return false;
-    
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (activity)
-    {
-	activity->watch(sliderBox->getFileDescriptor());
-    }
-
-    return true;
-}
-
-void SliderboxTask::updateHook()
-{
-    SliderboxTaskBase::updateHook();
-    
-    RawCommand rcmd;
 
     bool updated = false;
     bool gotValue = false;
     while(this->sliderBox->pollNonBlocking(updated))
-	gotValue = true;
+        gotValue = true;
 
     if(!gotValue)
-	return;
+        return false;
     
     rcmd.deviceIdentifier = "Sliderbox";
 
@@ -80,7 +65,7 @@ void SliderboxTask::updateHook()
     
     for (int i = 0; i < 7; i++)
     {
-	rcmd.axisValue[i] = this->sliderBox->getValue(i);
+        rcmd.axisValue[i] = this->sliderBox->getValue(i);
     }
 
     for (int i = 0; i < 4; i++)
@@ -88,14 +73,5 @@ void SliderboxTask::updateHook()
         rcmd.buttonValue.push_back(this->sliderBox->getButtonOn(i));
     }
 
-    _raw_command.write(rcmd);
-}
-
-void SliderboxTask::stopHook()
-{
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    activity->clearAllWatches();
-
-    SliderboxTaskBase::stopHook();
+    return true;
 }

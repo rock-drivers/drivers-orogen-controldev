@@ -9,21 +9,14 @@ Remote::Remote(std::string const& name) :
 {
 }
 
-/// The following lines are template definitions for the various state machine
-// hooks defined by Orocos::RTT. See Remote.hpp for more detailed
-// documentation about them.
 
-bool Remote::configureHook()
+int Remote::getFileDescriptor()
 {
-
-    return true;
+    return -1;
 }
-// bool Remote::startHook() { return true; }
 
-void Remote::updateHook()
+bool Remote::updateRawCommand(RawCommand& rcmd_out)
 {
-    base::commands::Motion2D mcmd;
-
     canbus::Message msg;
     int currentbit;
    
@@ -35,7 +28,7 @@ void Remote::updateHook()
             buttons = (int) (msg.data[0]);
             sliders = (int) (msg.data[1] >> 4);
             resolution = (((int) ((msg.data[1] & 0xC)>> 2))+1)*8;
-	    //resolution = (int) (msg.data[1] &&0xC); 
+            //resolution = (int) (msg.data[1] &&0xC); 
             next_sequenznumber = 0;
             payloadbits = (5 + buttons + 4 + 2 + sliders*resolution);
             if (payloadbits%61)
@@ -47,9 +40,9 @@ void Remote::updateHook()
             current_slider = 0;
             rcmd.axisValue.clear();
             rcmd.buttonValue.clear();
-	    rcmd.axisValue.resize(sliders,0.0);
+            rcmd.axisValue.resize(sliders,0.0);
             rcmd.buttonValue.resize(buttons,0.0);
-	    buffered_char = 0;
+            buffered_char = 0;
 
         }
 
@@ -65,7 +58,7 @@ void Remote::updateHook()
 
 
         while (currentbit < 64){
-	    buffered_char = (buffered_char << 1) | ((msg.data[(currentbit)/8] >> (7-(currentbit%8))) & 0x01);
+            buffered_char = (buffered_char << 1) | ((msg.data[(currentbit)/8] >> (7-(currentbit%8))) & 0x01);
             buffered_charx++;
             if (current_button < buttons){
                 rcmd.buttonValue.at(current_button) = (bool) buffered_char;
@@ -84,48 +77,28 @@ void Remote::updateHook()
             } else {
                 break;
             }
-	    currentbit++;
+            currentbit++;
             
         }
-        /*
-        for (int i; i < 6; i++){
-            if (rcmd.buttonValue.at(i)){
-            } else {
-            }
-        }
-        */
         next_sequenznumber++;
         if (next_sequenznumber == expected_sequences){
-            /*
-            //hau raus
-            struct base::actuators::Command cmd;
-            cmd.resize(4);    
-            if (rcmd.axisValue.at(0).size() >= 4){
-                for (int i = 0; i < 4; i++){
-                    cmd.target.at(i) =  (double) (((int) rcmd.axisValue.at(0).at(i))-127)/260;
-                    cmd.mode.at(i) = base::actuators::DM_PWM;
-                } 
-            }
-            _motor_command.write(cmd);
-            */
             rcmd.time = base::Time::now();
             /*
-	    for (int i = 0; i < sliders; i++){
+            for (int i = 0; i < sliders; i++){
                     rcmd.axisValue.at(0).at(i)=  (double) (((int) rcmd.axisValue.at(0).at(i))-127)/100;
                     printf("Writing out axis value: %i %i\n",i,rcmd.axisValue.at(0).at(i));
             }
             */
-           _raw_command.write(rcmd);
+            
+            rcmd = rcmd_out;
+            return true;
         }else {
-             return;
+             return false;
         }
     }
-    // Send raw command
-    //_raw_command.write(rcmd);
+    
+    return false;
 }
 
 
-// void Remote::errorHook() {}
-// void Remote::stopHook() {}
-// void Remote::cleanupHook() {}
 

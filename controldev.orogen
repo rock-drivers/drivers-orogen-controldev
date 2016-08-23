@@ -11,6 +11,8 @@ task_context "GenericTask" do
     abstract
 
     property("axisScale","/std/vector<double>")
+    
+    property("axisPorts", "std::vector<controldev::AxisPort>")
 
     output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
@@ -22,10 +24,8 @@ task_context "JoystickTask" do
 
     doc("A Task that provides a joystick driver")
 
-#    default_activity :fd_driven
+    default_activity :fd_driven
     needs_configuration
-
-    periodic 0.1
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")

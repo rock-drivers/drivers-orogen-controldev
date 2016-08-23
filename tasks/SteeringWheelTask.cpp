@@ -44,39 +44,17 @@ bool SteeringWheelTask::configureHook()
     return true;
 }
 
-bool SteeringWheelTask::startHook()
+int SteeringWheelTask::getFileDescriptor()
 {
-    if (! SteeringWheelTaskBase::startHook())
-        return false;
-    
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (activity)
-    {
-	activity->watch(steerControl->getFileDescriptor());
-    }
-    
-    return true;
+    return steerControl->getFileDescriptor();
 }
 
-void SteeringWheelTask::updateHook()
-{
-    SteeringWheelTaskBase::updateHook();
-    
-    base::commands::Motion2D mcmd;
-    
-    RawCommand rcmd;
-    
-    bool update = false;
-
+bool SteeringWheelTask::updateRawCommand(RawCommand& rcmd)
+{    
     while(steerControl->updateState())
     {
-	update = true;
     }
     
-    if(!update)
-	return;
-
     rcmd.deviceIdentifier = steerControl->getName();
 
     rcmd.axisValue.resize(5);
@@ -87,7 +65,6 @@ void SteeringWheelTask::updateHook()
     rcmd.axisValue[3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
     rcmd.axisValue[4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
-
     int buttonCount = steerControl->getNrButtons();
     
     // Set button bit list
@@ -96,15 +73,5 @@ void SteeringWheelTask::updateHook()
         rcmd.buttonValue.push_back(steerControl->getButtonPressed(i));
     }
     
-    // Send raw command
-    _raw_command.write(rcmd);
-}
-
-void SteeringWheelTask::stopHook()
-{
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    activity->clearAllWatches();
-
-    SteeringWheelTaskBase::stopHook();
+    return true;
 }
