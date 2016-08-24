@@ -22,7 +22,7 @@ namespace controldev {
         };
         
         std::vector<AxisPortHandle> axisHandles;
-        
+        std::vector<double> axisScales;
     public:
         GenericTask(std::string const& name = "controldev::GenericTask", TaskCore::TaskState initial_state = Stopped);
         GenericTask(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state = Stopped);
