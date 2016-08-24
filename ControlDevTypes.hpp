@@ -16,6 +16,8 @@ namespace controldev
         int axisNr;
         //scale factor that is applied to the output value
         double scaleFactor;
+        //offset that will be applied to the output value
+        double offset;
     };
     
     /** A data structure for raw data values of input devices.

@@ -59,13 +59,14 @@ void GenericTask::updateHook()
     for(size_t i = 0 ; i < axisHandles.size(); i++)
     {
         const AxisPortHandle &handle(axisHandles[i]);
-        if(handle.portDesc.axisNr < 0 || handle.portDesc.axisNr > rcmd.axisValue.size())
+        const AxisPort &desc(handle.portDesc);
+        if(desc.axisNr < 0 || desc.axisNr > rcmd.axisValue.size())
         {
-            std::cout << "Error, there is no axis " << handle.portDesc.axisNr << " available. Max nr axis is " << rcmd.axisValue.size() << std::endl;
+            std::cout << "Error, there is no axis " << desc.axisNr << " available. Max nr axis is " << rcmd.axisValue.size() << std::endl;
             exception();
         }
         
-        const double value = rcmd.axisValue[handle.portDesc.axisNr] * handle.portDesc.scaleFactor;
+        const double value = rcmd.axisValue[desc.axisNr] * desc.scaleFactor + desc.offset;
         handle.port->write(value);
     }
 };
