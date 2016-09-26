@@ -2,7 +2,7 @@
 #define CONTROLDEV_GENERICTASK_TASK_HPP
 
 #include "controldev/GenericTaskBase.hpp"
-
+#include "ControlDevTypes.hpp"
 #include <vector>
 
 namespace controldev {
@@ -10,12 +10,24 @@ namespace controldev {
     {
 	friend class GenericTaskBase;
     protected:
+        virtual bool updateRawCommand(RawCommand& rcmd) = 0;
 
+        virtual int getFileDescriptor() = 0;
+        
+        class AxisPortHandle
+        {
+        public:
+            AxisPort portDesc;
+            RTT::OutputPort<double> *port;
+        };
+        
+        std::vector<AxisPortHandle> axisHandles;
+        std::vector<double> axisScales;
     public:
         GenericTask(std::string const& name = "controldev::GenericTask", TaskCore::TaskState initial_state = Stopped);
         GenericTask(std::string const& name, RTT::ExecutionEngine* engine, TaskCore::TaskState initial_state = Stopped);
 
-	~GenericTask();
+	virtual ~GenericTask();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -30,14 +42,14 @@ namespace controldev {
          *     ...
          *   end
          */
-        // bool configureHook();
+        virtual bool configureHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to Running. If it returns false, then the component will
          * stay in Stopped. Otherwise, it goes into Running and updateHook()
          * will be called.
          */
-        // bool startHook();
+        virtual bool startHook();
 
         /** This hook is called by Orocos when the component is in the Running
          * state, at each activity step. Here, the activity gives the "ticks"
@@ -55,7 +67,7 @@ namespace controldev {
          * called before starting it again.
          *
          */
-        // void updateHook();
+        virtual void updateHook();
         
 
         /** This hook is called by Orocos when the component is in the
@@ -70,6 +82,7 @@ namespace controldev {
          * from Running to Stopped after stop() has been called.
          */
         // void stopHook();
+        virtual void stopHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to PreOperational, requiring the call to configureHook()

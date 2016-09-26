@@ -8,6 +8,18 @@
 namespace controldev
 {
 
+    struct AxisPort
+    {
+        //name of the to be created port
+        std::string portName;
+        //axis number of the port that should be written out
+        int axisNr;
+        //scale factor that is applied to the output value
+        double scaleFactor;
+        //offset that will be applied to the output value
+        double offset;
+    };
+    
     /** A data structure for raw data values of input devices.
      *  Currently, only the Joystick and SliderBox inmput devices
      *  are supported.
@@ -24,11 +36,10 @@ namespace controldev
          */
         base::Time time;
 
-        /* Index 1: num-of input axis, //index 2: dimensions of this axis
-         * If you have an gamepand which has 2 2Dknops you have an [2][2] 
-         * size'd array for an 3D Mouse you could have [1][6]
-         */
-        std::vector<std::vector<double> > axisValue;
+        /**
+         * Axis values, scaled betwen 0 and 1.
+         * */
+        std::vector<double> axisValue;
 
         /*
          * Switch/Key Values

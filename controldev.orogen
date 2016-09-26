@@ -11,6 +11,8 @@ task_context "GenericTask" do
     abstract
 
     property("axisScale","/std/vector<double>")
+    
+    property("axisPorts", "std::vector<controldev::AxisPort>")
 
     output_port("raw_command", "controldev/RawCommand").
         doc("Port for raw command structures (composed of joystick and sliderbox values)")
@@ -22,28 +24,12 @@ task_context "JoystickTask" do
 
     doc("A Task that provides a joystick driver")
 
-#    default_activity :fd_driven
+    default_activity :fd_driven
     needs_configuration
-
-    periodic 0.1
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
 
-end
-
-task_context "JoyPadTask" do
-    subclasses "GenericTask"
-
-    doc("A Task that provides a driver for JoyPad")
-
-    #default_activity :fd_driven
-    needs_configuration
-
-    periodic 0.1
-
-    property("device", "/std/string", "/dev/input/js0").
-        doc("Path to the joypad device")
 end
 
 task_context "Mouse3DTask" do
@@ -77,50 +63,13 @@ task_context "SliderboxTask" do
         doc("Path to the joystick device")
 end
 
-# This task converts Raw commands like them they are generated from the Joystick
-# To Motion Command2D for direct Robot control
-task_context "RawJoystickToMotion2D" do
-    property("minSpeed", "double", -1.5).
-	doc("Minimum translation speed in m/s")
-
-    property("maxSpeed", "double", 1.5).
-	doc("Maximum translation speed in m/s")
-
-    property("maxRotationSpeed", "double", Math::PI).
-	doc("Maximum rotation speed in rad/s")
-
-    input_port("raw_command", "controldev/RawCommand")
-    
-    output_port("motion_command", "base/commands/Motion2D")
-    
-    port_driven :raw_command
-end
-
-# This task converts Raw commands like them they are generated from the Joystick
-# To Motion Command2D for direct Robot control
-task_context "RawWheelToMotion2D" do
-    property("minSpeed", "double", -1.5).
-	doc("Minimum translation speed in m/s")
-
-    property("maxSpeed", "double", 1.5).
-	doc("Maximum translation speed in m/s")
-
-    property("maxRotationSpeed", "double", Math::PI).
-	doc("Maximum rotation speed in rad/s")
-
-    input_port("raw_command", "controldev/RawCommand")
-    output_port("motion_command", "base/commands/Motion2D")
-
-    port_driven :raw_command
-end
-
 # This task converts controldev/RawCommand to base/MotionCommand2D
 # with configurable axes, ranges and deadzones
 task_context "GenericRawToMotion2D" do
-    property("rotation_axis", "/std/vector<int>").doc("Rotation axis as reported by controldev(main and sub axis)")
-    property("heading_axis_x", "/std/vector<int>").doc("heading X (Heading is Angle of Vector between x,y)")
-    property("heading_axis_y", "/std/vector<int>").doc("heading Y (Heading is Angle of Vector between x,y)")
-    property("translation_axis", "/std/vector<int>").doc("Translation Axis")
+    property("rotation_axis", "int").doc("Rotation axis as reported by controldev(main and sub axis)")
+    property("heading_axis_x", "int").doc("heading X (Heading is Angle of Vector between x,y)")
+    property("heading_axis_y", "int").doc("heading Y (Heading is Angle of Vector between x,y)")
+    property("translation_axis", "int").doc("Translation Axis")
     property("invert_rotation_axis", "bool", 0).doc("Invert Axis, default false")
     property("invert_heading_axis_x", "bool", 0).doc("Invert Axis, default false")
     property("invert_heading_axis_y", "bool", 0).doc("Invert Axis, default false")

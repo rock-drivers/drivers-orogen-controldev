@@ -13,6 +13,8 @@ namespace controldev {
     protected:
 	SliderBox *sliderBox;
 
+        virtual bool updateRawCommand(RawCommand& rcmd);
+        virtual int getFileDescriptor();
 
     public:
         SliderboxTask(std::string const& name = "controldev::SliderboxTask");
@@ -40,7 +42,7 @@ namespace controldev {
          * stay in Stopped. Otherwise, it goes into Running and updateHook()
          * will be called.
          */
-        bool startHook();
+//         bool startHook();
 
         /** This hook is called by Orocos when the component is in the Running
          * state, at each activity step. Here, the activity gives the "ticks"
@@ -56,7 +58,7 @@ namespace controldev {
          * component is stopped and recover() needs to be called before starting
          * it again. Finally, FatalError cannot be recovered.
          */
-        void updateHook();
+//         void updateHook();
 
         /** This hook is called by Orocos when the component is in the
          * RunTimeError state, at each activity step. See the discussion in
@@ -69,7 +71,7 @@ namespace controldev {
         /** This hook is called by Orocos when the state machine transitions
          * from Running to Stopped after stop() has been called.
          */
-        void stopHook();
+//         void stopHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to PreOperational, requiring the call to configureHook()

@@ -25,7 +25,8 @@ namespace controldev {
         unsigned int bad_packages;
     	RawCommand rcmd;
     
-    
+        virtual bool updateRawCommand(RawCommand& rcmd);
+        virtual int getFileDescriptor();
 
     public:
         Remote(std::string const& name = "controldev::Remote");
@@ -43,7 +44,7 @@ namespace controldev {
          *     ...
          *   end
          */
-        bool configureHook();
+//         bool configureHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to Running. If it returns false, then the component will
@@ -68,7 +69,7 @@ namespace controldev {
          * called before starting it again.
          *
          */
-        void updateHook();
+//         void updateHook();
 
         /** This hook is called by Orocos when the component is in the
          * RunTimeError state, at each activity step. See the discussion in

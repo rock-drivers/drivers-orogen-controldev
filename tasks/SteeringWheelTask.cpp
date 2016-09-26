@@ -44,50 +44,26 @@ bool SteeringWheelTask::configureHook()
     return true;
 }
 
-bool SteeringWheelTask::startHook()
+int SteeringWheelTask::getFileDescriptor()
 {
-    if (! SteeringWheelTaskBase::startHook())
-        return false;
-    
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (activity)
-    {
-	activity->watch(steerControl->getFileDescriptor());
-    }
-    
-    return true;
+    return steerControl->getFileDescriptor();
 }
 
-void SteeringWheelTask::updateHook()
-{
-    SteeringWheelTaskBase::updateHook();
-    
-    base::commands::Motion2D mcmd;
-    
-    RawCommand rcmd;
-    
-    bool update = false;
-
+bool SteeringWheelTask::updateRawCommand(RawCommand& rcmd)
+{    
     while(steerControl->updateState())
     {
-	update = true;
     }
     
-    if(!update)
-	return;
-
     rcmd.deviceIdentifier = steerControl->getName();
 
-    rcmd.axisValue.resize(1);
-    rcmd.axisValue[0].resize(5);
+    rcmd.axisValue.resize(5);
 
-    rcmd.axisValue[0][1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
-    rcmd.axisValue[0][0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
-    rcmd.axisValue[0][2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
-    rcmd.axisValue[0][3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
-    rcmd.axisValue[0][4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
-
+    rcmd.axisValue[1] = steerControl->getAxis(LogitechG27::AXIS_Wheel);
+    rcmd.axisValue[0] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirupdown);
+    rcmd.axisValue[2] = steerControl->getAxis(LogitechG27::AXIS_Clutchdirleftright); 
+    rcmd.axisValue[3] = steerControl->getAxis(LogitechG27::AXIS_Throttle);
+    rcmd.axisValue[4] = steerControl->getAxis(LogitechG27::AXIS_Brake);
 
     int buttonCount = steerControl->getNrButtons();
     
@@ -97,15 +73,5 @@ void SteeringWheelTask::updateHook()
         rcmd.buttonValue.push_back(steerControl->getButtonPressed(i));
     }
     
-    // Send raw command
-    _raw_command.write(rcmd);
-}
-
-void SteeringWheelTask::stopHook()
-{
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    activity->clearAllWatches();
-
-    SteeringWheelTaskBase::stopHook();
+    return true;
 }

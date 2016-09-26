@@ -15,7 +15,7 @@ namespace controldev {
         Joystick *joystick;
 
         virtual bool updateRawCommand(RawCommand& rcmd);
-
+        virtual int getFileDescriptor();
     public:
         JoystickTask(std::string const& name = "controldev::JoystickTask");
         JoystickTask(std::string const& name, RTT::ExecutionEngine* engine);
@@ -42,7 +42,7 @@ namespace controldev {
          * stay in Stopped. Otherwise, it goes into Running and updateHook()
          * will be called.
          */
-        bool startHook();
+//         bool startHook();
 
         /** This hook is called by Orocos when the component is in the Running
          * state, at each activity step. Here, the activity gives the "ticks"
@@ -71,7 +71,7 @@ namespace controldev {
         /** This hook is called by Orocos when the state machine transitions
          * from Running to Stopped after stop() has been called.
          */
-        void stopHook();
+//         void stopHook();
 
         /** This hook is called by Orocos when the state machine transitions
          * from Stopped to PreOperational, requiring the call to configureHook()

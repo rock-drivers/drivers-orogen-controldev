@@ -66,59 +66,32 @@ bool Mouse3DTask::configureHook()
     
 }
 
-
-
-bool Mouse3DTask::startHook()
+int Mouse3DTask::getFileDescriptor()
 {
-    
-    if (! controldev::GenericTask::startHook())
-        return false;
-    
-    RTT::extras::FileDescriptorActivity* activity =
-        getActivity<RTT::extras::FileDescriptorActivity>();
-    if (activity)
-    {
-	activity->watch(interface->getFileDescriptor());
-    }
-    return true;
-    
+    return interface->getFileDescriptor();
 }
 
-
-void Mouse3DTask::updateHook()
+bool Mouse3DTask::updateRawCommand(RawCommand& rcmd)
 {
-    
-    controldev::GenericTask::updateHook();
-   
-    RawCommand rcmd;
     rcmd.deviceIdentifier= "3DMouse";
    
-    rcmd.axisValue.resize(1);
-    rcmd.axisValue[0].resize(6);
+    rcmd.axisValue.resize(6);
    
     connexionValues values;
     connexionValues rawValues;
     interface->getValue(values,rawValues);
 
-    rcmd.axisValue[0][0] = values.tx;
-    rcmd.axisValue[0][1] = values.ty;
-    rcmd.axisValue[0][2] = values.tz;
-    rcmd.axisValue[0][3] = values.rx;
-    rcmd.axisValue[0][4] = values.ry;
-    rcmd.axisValue[0][5] = values.rz;
+    rcmd.axisValue[0] = values.tx;
+    rcmd.axisValue[1] = values.ty;
+    rcmd.axisValue[2] = values.tz;
+    rcmd.axisValue[3] = values.rx;
+    rcmd.axisValue[4] = values.ry;
+    rcmd.axisValue[5] = values.rz;
     rcmd.buttonValue.push_back(values.button1);
     rcmd.buttonValue.push_back(values.button2);
-    _raw_command.write(rcmd);
-}
-
-
-
-void Mouse3DTask::errorHook()
-{
     
-    controldev::GenericTask::errorHook();
+    return true;
 }
-
 
 
 void Mouse3DTask::stopHook()
