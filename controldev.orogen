@@ -80,6 +80,11 @@ task_context "GenericRawToMotion2D" do
     property("heading_axis_y_deadzone", "double", 0.02).doc("heading_axis Y deadzone (range 0-1)")
     property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
     property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
+    # Allows to set the control mode. Default is Control: device commands are forwarded.
+    # ControlOff: Sends zero commands. KeepAlive: Sends NaN commands, this can be used as a dead man's switch.
+    property("control_mode", "controldev/ControlMode", :Control)
+    # If set those bottons allow to change the control mode.
+    property("botton_mapping", "controldev/ButtonMapping")
 
     input_port "raw_command", "controldev/RawCommand"
     output_port "motion_command", "base/commands/Motion2D"

@@ -4,6 +4,7 @@
 #define CONTROLDEV_GENERICRAWTOMOTION2D_TASK_HPP
 
 #include "controldev/GenericRawToMotion2DBase.hpp"
+#include "ControlDevTypes.hpp"
 
 namespace controldev {
 
@@ -26,6 +27,9 @@ with configurable axes
     {
 	friend class GenericRawToMotion2DBase;
     protected:
+        ControlMode control_mode;
+
+        void updateControlMode(const ButtonMapping& button_mapping, const std::vector<uint8_t>& buttons);
 
     public:
         /** TaskContext constructor for GenericRawToMotion2D
