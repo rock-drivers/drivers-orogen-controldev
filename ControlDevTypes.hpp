@@ -29,7 +29,7 @@ namespace controldev
         /*
          * Device Type identifier like
          */
-	std::string deviceIdentifier;
+        std::string deviceIdentifier;
 
         /*
          * The Timesamp
@@ -55,7 +55,8 @@ namespace controldev
     {
         ControlOff = 0,
         Control,
-        KeepAlive
+        KeepAlive,
+        Timeout
     };
 
     struct ButtonMapping
@@ -63,8 +64,9 @@ namespace controldev
         int control_off;
         int control;
         int keep_alive;
+        int timeout;
 
-        ButtonMapping() : control_off(-1), control(-1), keep_alive(-1) {}
+        ButtonMapping() : control_off(-1), control(-1), keep_alive(-1), timeout(-1) {}
     };
 }
 

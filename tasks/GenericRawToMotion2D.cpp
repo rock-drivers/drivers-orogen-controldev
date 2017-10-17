@@ -24,7 +24,13 @@ void GenericRawToMotion2D::updateControlMode(const ButtonMapping& button_mapping
 {
     control_mode = _control_mode.value();
 
-    if(button_mapping.control_off >= 0 &&
+    if(button_mapping.timeout >= 0 &&
+        button_mapping.timeout < buttons.size() &&
+        buttons[button_mapping.timeout] > 0)
+    {
+        control_mode = controldev::Timeout;
+    }
+    else if(button_mapping.control_off >= 0 &&
         button_mapping.control_off < buttons.size() &&
         buttons[button_mapping.control_off] > 0)
     {
