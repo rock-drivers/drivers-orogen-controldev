@@ -74,9 +74,6 @@ task_context "GenericRawToMotion2D" do
 end
      
 
-if has_typekit?('canbus')
-import_types_from "canbus"
-
 # A Task that receives CAN messages and converts them into raw-commands
 task_context "Remote", subclasses: 'GenericTask' do
     # Input port for generic messegen from inputdevices
@@ -84,8 +81,5 @@ task_context "Remote", subclasses: 'GenericTask' do
         needs_reliable_connection
 
     port_driven
-end
-else
-    STDERR.puts "WARN: the Remote task will be disabled as the canbus orogen component is not present"
 end
 
