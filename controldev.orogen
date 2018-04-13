@@ -10,6 +10,7 @@ import_types_from "ControlDevTypes.hpp"
 
 task_context "GenericTask" do
     abstract
+    needs_configuration
 
     property("axisScale","/std/vector<double>")
     
@@ -23,7 +24,6 @@ end
 # A Task that provides a joystick driver
 task_context "JoystickTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
-    needs_configuration
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
@@ -39,13 +39,11 @@ end
 # A Task that provides a SteeringWheel driver
 task_context "SteeringWheelTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
-    needs_configuration
 end
 
 # A Task that provides a SliderBox driver
 task_context "SliderboxTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
-    needs_configuration
 
     property("device", "/std/string", "/dev/input/js0").
         doc("Path to the joystick device")
@@ -78,7 +76,6 @@ end
 
 if has_typekit?('canbus')
 import_types_from "canbus"
-    needs_configuration
 
 # A Task that receives CAN messages and converts them into raw-commands
 task_context "Remote", subclasses: 'GenericTask' do
