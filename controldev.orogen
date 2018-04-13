@@ -12,22 +12,22 @@ task_context "GenericTask" do
     abstract
     needs_configuration
 
-    property("axisScale","/std/vector<double>")
+    # Scale factor to be applied to the control device raw readings
+    property "axisScale","/std/vector<double>"
     
-    property("axisPorts", "std::vector<controldev::AxisPort>")
+    # Description of the control device axes
+    property "axisPorts", "/std/vector</controldev/AxisPort"
 
-    output_port("raw_command", "controldev/RawCommand").
-        doc("Port for raw command structures (composed of joystick and sliderbox values)")
-
+    # Port for the raw data coming from the control device
+    output_port "raw_command", "controldev/RawCommand"
 end
 
 # A Task that provides a joystick driver
 task_context "JoystickTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
 
-    property("device", "/std/string", "/dev/input/js0").
-        doc("Path to the joystick device")
-
+    # Path to the joystick device
+    property "device", "/std/string", "/dev/input/js0"
 end
 
 # A Task that provides a 3DConnexion 3D Mouse driver
@@ -45,8 +45,8 @@ end
 task_context "SliderboxTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
 
-    property("device", "/std/string", "/dev/input/js0").
-        doc("Path to the joystick device")
+    # Path to the joystick device
+    property "device", "/std/string", "/dev/input/js0"
 end
 
 # This task converts controldev/RawCommand to base/MotionCommand2D
@@ -79,8 +79,8 @@ import_types_from "canbus"
 
 # A Task that receives CAN messages and converts them into raw-commands
 task_context "Remote", subclasses: 'GenericTask' do
+    # Input port for generic messegen from inputdevices
     input_port("canInputDevice", "canbus/Message").
-        doc("Input port for generic messegen from inputdevices").
         needs_reliable_connection
 
     port_driven
