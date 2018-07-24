@@ -37,9 +37,7 @@ task_context "GenericTask" do
 
 end
 
-task_context "JoystickTask" do
-    subclasses "GenericTask"
-
+task_context "JoystickTask", subclasses: "GenericTask" do
     doc("A Task that provides a joystick driver")
 
 #    default_activity :fd_driven
@@ -52,9 +50,7 @@ task_context "JoystickTask" do
 
 end
 
-task_context "Mouse3DTask" do
-    subclasses "GenericTask"
-
+task_context "Mouse3DTask", subclasses: "GenericTask" do
     doc("A Task that provides a 3D Mouse \"3DConnexion\" driver")
 
     default_activity :fd_driven
@@ -62,18 +58,14 @@ task_context "Mouse3DTask" do
 
 end
 
-task_context "SteeringWheelTask" do
-    subclasses "GenericTask"
-
+task_context "SteeringWheelTask", subclasses: "GenericTask" do
     doc("A Task that provides a SteeringWheel driver")
     
     default_activity :fd_driven
     needs_configuration
 end
 
-task_context "SliderboxTask" do
-    subclasses "GenericTask"
-
+task_context "SliderboxTask", subclasses: "GenericTask" do
     doc("A Task that provides a SliderBox driver")
 
     default_activity :fd_driven
@@ -85,9 +77,8 @@ end
 
 if has_typekit?('canbus')
 import_types_from "canbus"
-task_context "Remote" do
-    subclasses "GenericTask"
 
+task_context "Remote", subclasses: "GenericTask" do
     doc("A Task that receives CAN messages and translates them into Joystick/Sliderbox like output")
 
     needs_configuration
