@@ -1,12 +1,13 @@
-name "controldev"
-version "1.0"
+name 'controldev'
+version '1.0'
 
-using_library "controldev"
-using_task_library "canbus"
+using_library 'controldev'
+using_task_library 'canbus'
 
-import_types_from "base"
-import_types_from "canbus"
-import_types_from "ControlDevTypes.hpp"
+import_types_from 'base'
+import_types_from 'canbus'
+import_types_from 'controldev/RawCommand.hpp'
+import_types_from 'ControlDevTypes.hpp'
 
 task_context "GenericTask" do
     abstract
@@ -14,7 +15,7 @@ task_context "GenericTask" do
 
     # Scale factor to be applied to the control device raw readings
     property "axisScale","/std/vector<double>"
-    
+
     # Description of the control device axes
     property "axisPorts", "/std/vector</controldev/AxisPort"
 
@@ -72,7 +73,7 @@ task_context "GenericRawToMotion2D" do
 
     port_driven :raw_command
 end
-     
+
 
 # A Task that receives CAN messages and converts them into raw-commands
 task_context "Remote", subclasses: 'GenericTask' do
