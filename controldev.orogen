@@ -9,78 +9,80 @@ import_types_from 'canbus'
 import_types_from 'controldev/RawCommand.hpp'
 import_types_from 'ControlDevTypes.hpp'
 
-task_context "GenericTask" do
+task_context 'GenericTask' do
     abstract
     needs_configuration
 
     # Scale factor to be applied to the control device raw readings
-    property "axisScale","/std/vector<double>"
+    property 'axisScale','/std/vector<double>'
 
     # Description of the control device axes
-    property "axisPorts", "/std/vector</controldev/AxisPort"
+    property 'axisPorts', '/std/vector</controldev/AxisPort'
 
     # Port for the raw data coming from the control device
-    output_port "raw_command", "controldev/RawCommand"
+    output_port 'raw_command', 'controldev/RawCommand'
 end
 
 # A Task that provides a joystick driver
-task_context "JoystickTask", subclasses: 'GenericTask' do
+task_context 'JoystickTask', subclasses: 'GenericTask' do
     default_activity :fd_driven
 
     # Path to the joystick device
-    property "device", "/std/string", "/dev/input/js0"
+    property 'device', '/std/string', '/dev/input/js0'
 end
 
 # A Task that provides a 3DConnexion 3D Mouse driver
-task_context "Mouse3DTask", subclasses: 'GenericTask' do
+task_context 'Mouse3DTask', subclasses: 'GenericTask' do
     default_activity :fd_driven
     needs_configuration
 end
 
 # A Task that provides a SteeringWheel driver
-task_context "SteeringWheelTask", subclasses: 'GenericTask' do
+task_context 'SteeringWheelTask', subclasses: 'GenericTask' do
     default_activity :fd_driven
 end
 
 # A Task that provides a SliderBox driver
-task_context "SliderboxTask", subclasses: 'GenericTask' do
+task_context 'SliderboxTask', subclasses: 'GenericTask' do
     default_activity :fd_driven
 
     # Path to the joystick device
-    property "device", "/std/string", "/dev/input/js0"
+    property 'device', '/std/string', '/dev/input/js0'
 end
 
 # This task converts controldev/RawCommand to base/MotionCommand2D
 # with configurable axes, ranges and deadzones
-task_context "GenericRawToMotion2D" do
-    property("rotation_axis", "int").doc("Rotation axis as reported by controldev(main and sub axis)")
-    property("heading_axis_x", "int").doc("heading X (Heading is Angle of Vector between x,y)")
-    property("heading_axis_y", "int").doc("heading Y (Heading is Angle of Vector between x,y)")
-    property("translation_axis", "int").doc("Translation Axis")
-    property("invert_rotation_axis", "bool", 0).doc("Invert Axis, default false")
-    property("invert_heading_axis_x", "bool", 0).doc("Invert Axis, default false")
-    property("invert_heading_axis_y", "bool", 0).doc("Invert Axis, default false")
-    property("invert_translation_axis", "bool", 0).doc("Invert Axis, default false")
-    property("maxSpeed", "double", 1.0).doc("Maximum speed in m/s")
-    property("maxRotationSpeed", "double", Math::PI / 2).doc("Maximum rotational velocity in rad/s")
-    property("heading_axis_x_deadzone", "double", 0.02).doc("heading axis X deadzone (range 0-1)")
-    property("heading_axis_y_deadzone", "double", 0.02).doc("heading_axis Y deadzone (range 0-1)")
-    property("rotation_axis_deadzone", "double", 0.02).doc("Rotation axis deadzone (range 0-1)")
-    property("translation_axis_deadzone", "double", 0.02).doc("Translation axis deadzone (range 0-1)")
+task_context 'GenericRawToMotion2D' do
+    property('rotation_axis', 'int').doc('Rotation axis as reported by controldev(main and sub axis)')
+    property('heading_axis_x', 'int').doc('heading X (Heading is Angle of Vector between x,y)')
+    property('heading_axis_y', 'int').doc('heading Y (Heading is Angle of Vector between x,y)')
+    property('translation_axis', 'int').doc('Translation Axis')
+    property('invert_rotation_axis', 'bool', 0).doc('Invert Axis, default false')
+    property('invert_heading_axis_x', 'bool', 0).doc('Invert Axis, default false')
+    property('invert_heading_axis_y', 'bool', 0).doc('Invert Axis, default false')
+    property('invert_translation_axis', 'bool', 0).doc('Invert Axis, default false')
+    property('maxSpeed', 'double', 1.0).doc('Maximum speed in m/s')
+    property('maxRotationSpeed', 'double', Math::PI / 2).doc('Maximum rotational velocity in rad/s')
+    property('heading_axis_x_deadzone', 'double', 0.02).doc('heading axis X deadzone (range 0-1)')
+    property('heading_axis_y_deadzone', 'double', 0.02).doc('heading_axis Y deadzone (range 0-1)')
+    property('rotation_axis_deadzone', 'double', 0.02).doc('Rotation axis deadzone (range 0-1)')
+    property('translation_axis_deadzone', 'double', 0.02).doc('Translation axis deadzone (range 0-1)')
 
-    input_port "raw_command", "controldev/RawCommand"
-    output_port "motion_command", "base/commands/Motion2D"
+    input_port 'raw_command', 'controldev/RawCommand'
+    output_port 'motion_command', 'base/commands/Motion2D'
 
     port_driven :raw_command
 end
 
-
 # A Task that receives CAN messages and converts them into raw-commands
-task_context "Remote", subclasses: 'GenericTask' do
+task_context 'Remote', subclasses: 'GenericTask' do
     # Input port for generic messegen from inputdevices
-    input_port("canInputDevice", "canbus/Message").
+    input_port('canInputDevice', 'canbus/Message').
         needs_reliable_connection
 
     port_driven
 end
 
+task_context 'WebSocketTask' do
+    output_port 'raw_command', 'controldev/RawCommand'
+end
