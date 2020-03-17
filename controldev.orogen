@@ -3,6 +3,8 @@ version '1.0'
 
 using_library 'controldev'
 using_task_library 'canbus'
+using_library 'libsoup-2.4', typekit: false
+using_library 'jsoncpp', typekit: false
 
 import_types_from 'base'
 import_types_from 'canbus'
@@ -84,5 +86,8 @@ task_context 'Remote', subclasses: 'GenericTask' do
 end
 
 task_context 'WebSocketTask' do
+    property 'port', 'int', 58000
     output_port 'raw_command', 'controldev/RawCommand'
+
+    periodic 0.1
 end

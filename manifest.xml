@@ -15,5 +15,7 @@
   <depend package="base/orogen/types"/>
   <depend package="tools/logger"/>
   <depend package="orogen"/>
+  <depend package="soup" />
+  <depend package="seasocks"/>
   <!--tags>stable</tags-->
 </package>
