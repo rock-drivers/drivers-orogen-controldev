@@ -59,33 +59,21 @@ void GraupnerMC20Task::processIO()
 {
     controldev::RawCommand rcmd;
     rcmd.time = base::Time::now();
+    MC20Output out;
     driver.getReading(&out);
     rcmd.deviceIdentifier= "mc20";
-    std::vector<double> axis;
-    axis.push_back((out.channel[1]-12000)/3200.0);
-    axis.push_back((out.channel[2]-12000)/3200.0);
-    axis.push_back((out.channel[3]-12000)/3200.0);
-    axis.push_back((out.channel[4]-12000)/3200.0);
 
-    std::vector<double> axis2;
-    axis2.push_back((out.channel[5]-12000)/3200.0);
-    axis2.push_back((out.channel[6]-12000)/3200.0);
+    rcmd.axisValue.resize(6, 0);
+    for (unsigned i=0; i < rcmd.axisValue.size(); i++)
+    {
+        rcmd.axisValue[i] = (out.channel[i+1] - 12000) / 3200.0;
 
-    for(unsigned i = 0; i < axis.size(); i++)
-    {
-        if (std::abs(axis[i]) <= 0.01)
-            axis[i] = 0.0;
-    }
-    for(unsigned i = 0; i < axis2.size(); i++)
-    {
-        if (std::abs(axis2[i]) <= 0.01)
-            axis2[i] = 0.0;
+        if (std::abs(rcmd.axisValue[i]) <= 0.01)
+            rcmd.axisValue[i] = 0.0;
     }
 
-    rcmd.axisValue.push_back(axis);
-    rcmd.axisValue.push_back(axis2);
     rcmd.buttonValue.resize(9, 0);
-    for (int i=0; i < 9; i++)
+    for (unsigned i=0; i < rcmd.buttonValue.size(); i++)
     {
         if (out.channel[i+7] > 14000)
         {
@@ -93,7 +81,4 @@ void GraupnerMC20Task::processIO()
         }
     }
     _raw_command.write(rcmd);
-
-    //TODO Buttons and scaling
-
 }

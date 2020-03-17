@@ -29,7 +29,6 @@ namespace controldev {
 
         controldev::GraupnerMC20 driver;    
         virtual void processIO();
-        MC20Output out;
     private:
 
 
