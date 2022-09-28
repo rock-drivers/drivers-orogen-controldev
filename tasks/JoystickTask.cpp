@@ -25,29 +25,91 @@ JoystickTask::~JoystickTask()
 // hooks defined by Orocos::RTT. See JoystickTask.hpp for more detailed
 // documentation about them.
 
+int JoystickTask::getFileDescriptor()
+{
+    return joystick->getFileDescriptor();
+}
+
 bool JoystickTask::configureHook()
 {
     if (! JoystickTaskBase::configureHook())
         return false;
 
     connectDevice();
-
     return true;
 }
 
-int JoystickTask::getFileDescriptor()
+void JoystickTask::connectDevice(bool recover)
 {
-//    int i;
-//    try
-//    {
-//        i = joystick->getFileDescriptor();
-//    } catch (const std::exception & e) {
-//        std::cerr << "ERROR caught myself! " << std::endl;
-//        std::cerr << "ERROR caught: " << e.what() << std::endl;
-//    }
-    return joystick->getFileDescriptor();
-//    return i;
+    // Try to connect the Joystick
+    if (recover)
+    {
+        if (not recoverConnection())
+        {
+            return;
+        }
+    }
 
+    if (joystick->init(_device.value()))
+    {
+        if (! device_connected_)
+        {
+            device_connected_ = true;
+            std::cout << "INFO: Device " << _device.value() << " connected" << std::endl;
+        }
+    } else {
+        if (device_connected_)
+        {
+            std::cerr << "Warning: Unable to open Joystick device "
+                << _device.value() << std::endl;
+            device_connected_ = false;
+        }
+    }
+}
+
+bool JoystickTask::recoverConnection()
+{
+    delete joystick;
+    // from generic stop hook
+    RTT::extras::FileDescriptorActivity* activity =
+        getActivity<RTT::extras::FileDescriptorActivity>();
+    if(activity)
+        activity->clearAllWatches();
+
+    joystick = new controldev::Joystick();
+    joystick->init(_device.value());
+    int fdID = joystick->getFileDescriptor();
+
+    // from generic start hook
+    if (activity && fdID != -1)
+    {
+        activity->watch(getFileDescriptor());
+        //get trigger a least every 25 ms
+        activity->setTimeout(25);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void JoystickTask::updateHook()
+{
+    if (device_connected_)
+    {
+        state(CONNECTED);
+        JoystickTaskBase::updateHook();
+        writeCommand();
+    } else {
+        state(NOT_CONNECTED);
+        connectDevice(true);
+    }
+}
+
+void JoystickTask::writeCommand()
+{
+    RawCommand rcmd;
+    updateRawCommand(rcmd);
+    _raw_command.write(rcmd);
 }
 
 bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
@@ -57,11 +119,13 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
     }
 
     rcmd.deviceIdentifier= joystick->getName();
-    
     rcmd.axisValue = joystick->getAxes();
-    
-    size_t buttonCount = joystick->getNrButtons();
+    if (not checkAxisValues(rcmd) )
+    {
+        throw std::runtime_error("Invalid axis values. Try to forget device and reconnect");
+    }
 
+    size_t buttonCount = joystick->getNrButtons();
     try
     {
         // Set button bit list
@@ -71,52 +135,24 @@ bool JoystickTask::updateRawCommand(RawCommand& rcmd) {
         }
     } catch (const std::runtime_error& e) {
         std::cerr << "Warning: Caught runtime error. Lost connection to device." << std::endl;
-        delete joystick;
-        joystick = new controldev::Joystick();
         device_connected_ = false;
         state(NOT_CONNECTED);
         return false;
     }
     
     rcmd.time = base::Time::now();
-
     return true;
 }
 
-
-void JoystickTask::updateHook()
+bool JoystickTask::checkAxisValues(const RawCommand& rmcd)
 {
-    std::cout << "DEBUG: in updateHook: " << __LINE__ << std::endl;
-    if (device_connected_)
+    unsigned int counter = 0;    
+    for (const auto & value : rmcd.axisValue)
     {
-        state(CONNECTED);
-        JoystickTaskBase::updateHook();
-
-        RawCommand rcmd;
-        updateRawCommand(rcmd);
-        _raw_command.write(rcmd);
-    } else {
-        state(NOT_CONNECTED);
-        connectDevice();
-    }
-}
-
-bool JoystickTask::connectDevice()
-{
-    // Try to connect the Joystick
-    std::cout << "DEBUG: in connectDevice: " << __LINE__ << std::endl;
-    if (joystick->init(_device.value()))
-    {
-        device_connected_ = true;
-        std::cout << "INFO: Device " << _device.value() << " connected" << std::endl;
-        return true;
-    } else {
-        if (device_connected_)
+        if (value == -1)
         {
-            std::cerr << "Warning: Unable to open Joystick device "
-                << _device.value() << std::endl;
+            counter++;
         }
-        device_connected_ = false;
-        return false;
     }
+    return counter < 5;
 }

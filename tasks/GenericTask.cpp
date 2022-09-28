@@ -39,15 +39,13 @@ bool GenericTask::configureHook()
 
 bool GenericTask::startHook()
 {
-    std::cout << "startHook from GenericTask" << std::endl;
     RTT::extras::FileDescriptorActivity* activity =
         getActivity<RTT::extras::FileDescriptorActivity>();
     if (activity)
     {
         activity->watch(getFileDescriptor());
         //get trigger a least every 25 ms
-//        activity->setTimeout(25);
-        activity->setTimeout(1000);
+        activity->setTimeout(25);
     }
 
     return TaskContext::startHook();
