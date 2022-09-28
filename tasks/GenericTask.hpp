@@ -8,12 +8,12 @@
 namespace controldev {
     class GenericTask : public GenericTaskBase
     {
-	friend class GenericTaskBase;
+    friend class GenericTaskBase;
     protected:
         virtual bool updateRawCommand(RawCommand& rcmd) = 0;
 
         virtual int getFileDescriptor() = 0;
-        
+    
         class AxisPortHandle
         {
         public:
@@ -23,11 +23,12 @@ namespace controldev {
         
         std::vector<AxisPortHandle> axisHandles;
         std::vector<double> axisScales;
+
     public:
         GenericTask(std::string const& name = "controldev::GenericTask");
         GenericTask(std::string const& name, RTT::ExecutionEngine* engine);
 
-	virtual ~GenericTask();
+        virtual ~GenericTask();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
@@ -89,9 +90,6 @@ namespace controldev {
          * before calling start() again.
          */
         // void cleanupHook();
-
-        
-
 
     };
 }

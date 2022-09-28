@@ -27,6 +27,8 @@ end
 task_context "JoystickTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
 
+    runtime_states "CONNECTED", "NOT_CONNECTED"
+
     # Path to the joystick device
     property "device", "/std/string", "/dev/input/js0"
 end

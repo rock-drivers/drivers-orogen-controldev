@@ -13,9 +13,13 @@ namespace controldev {
 	friend class JoystickTaskBase;
     protected:
         Joystick *joystick;
+        bool device_connected_;
 
-        virtual bool updateRawCommand(RawCommand& rcmd);
-        virtual int getFileDescriptor();
+
+        virtual bool updateRawCommand(RawCommand& rcmd) override;
+        virtual int getFileDescriptor() override;
+        bool connectDevice();
+
     public:
         JoystickTask(std::string const& name = "controldev::JoystickTask");
         JoystickTask(std::string const& name, RTT::ExecutionEngine* engine);
