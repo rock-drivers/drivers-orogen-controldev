@@ -1,66 +1,53 @@
-name "controldev"
-version "0.0"
+name 'controldev'
+version '1.0'
 
-using_library "controldev"
-using_library "canbus"
-using_task_library "canbus"
-import_types_from "base"
-import_types_from "ControlDevTypes.hpp"
-import_types_from "canbus"
+using_library 'controldev'
+using_task_library 'canbus'
+
+import_types_from 'base'
+import_types_from 'canbus'
+import_types_from 'controldev/RawCommand.hpp'
+import_types_from 'ControlDevTypes.hpp'
+
 task_context "GenericTask" do
     abstract
-
-    property("axisScale","/std/vector<double>")
-    
-    property("axisPorts", "std::vector<controldev::AxisPort>")
-
-    output_port("raw_command", "controldev/RawCommand").
-        doc("Port for raw command structures (composed of joystick and sliderbox values)")
-
-end
-
-task_context "JoystickTask" do
-    subclasses "GenericTask"
-
-    doc("A Task that provides a joystick driver")
-
-    default_activity :fd_driven
     needs_configuration
 
-    property("device", "/std/string", "/dev/input/js0").
-        doc("Path to the joystick device")
+    # Scale factor to be applied to the control device raw readings
+    property "axisScale","/std/vector<double>"
 
+    # Description of the control device axes
+    property "axisPorts", "/std/vector</controldev/AxisPort"
+
+    # Port for the raw data coming from the control device
+    output_port "raw_command", "controldev/RawCommand"
 end
 
-task_context "Mouse3DTask" do
-    subclasses "GenericTask"
-
-    doc("A Task that provides a 3D Mouse \"3DConnexion\" driver")
-
+# A Task that provides a joystick driver
+task_context "JoystickTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
-    needs_configuration
 
+    # Path to the joystick device
+    property "device", "/std/string", "/dev/input/js0"
 end
 
-task_context "SteeringWheelTask" do
-    subclasses "GenericTask"
-
-    doc("A Task that provides a SteeringWheel driver")
-
+# A Task that provides a 3DConnexion 3D Mouse driver
+task_context "Mouse3DTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
     needs_configuration
 end
 
-task_context "SliderboxTask" do
-    subclasses "GenericTask"
-
-    doc("A Task that provides a SliderBox driver")
-
+# A Task that provides a SteeringWheel driver
+task_context "SteeringWheelTask", subclasses: 'GenericTask' do
     default_activity :fd_driven
-    needs_configuration
+end
 
-    property("device", "/std/string", "/dev/input/js0").
-        doc("Path to the joystick device")
+# A Task that provides a SliderBox driver
+task_context "SliderboxTask", subclasses: 'GenericTask' do
+    default_activity :fd_driven
+
+    # Path to the joystick device
+    property "device", "/std/string", "/dev/input/js0"
 end
 
 # This task converts controldev/RawCommand to base/MotionCommand2D
@@ -91,24 +78,14 @@ task_context "GenericRawToMotion2D" do
 
     port_driven :raw_command
 end
-     
 
-if has_typekit?('canbus')
-import_types_from "canbus"
-task_context "Remote" do
-    subclasses "GenericTask"
 
-    doc("A Task that receives CAN messages and converts them into raw-commands")
-
-    needs_configuration
-
+# A Task that receives CAN messages and converts them into raw-commands
+task_context "Remote", subclasses: 'GenericTask' do
+    # Input port for generic messegen from inputdevices
     input_port("canInputDevice", "canbus/Message").
-        doc("Input port for generic messegen from inputdevices").
         needs_reliable_connection
 
     port_driven
-end
-else
-    STDERR.puts "WARN: the Remote task will be disabled as the canbus orogen component is not present"
 end
 
