@@ -26,7 +26,7 @@ namespace controldev {
         JoystickTask(std::string const& name = "controldev::JoystickTask");
         JoystickTask(std::string const& name, RTT::ExecutionEngine* engine);
 
-    	~JoystickTask();
+        ~JoystickTask();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the

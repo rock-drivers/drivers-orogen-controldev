@@ -17,7 +17,6 @@ GenericTask::~GenericTask()
 
 bool GenericTask::configureHook()
 {
-    std::cout << "configureHook from GenericTask" << std::endl;
     axisHandles.clear();
     
     const std::vector<AxisPort> &portDescs(_axisPorts.get());
@@ -54,24 +53,24 @@ bool GenericTask::startHook()
 void GenericTask::updateHook()
 {
     GenericTaskBase::updateHook();
-    
+
     RawCommand rcmd;
     updateRawCommand(rcmd);
-    
+
     if(axisScales.size() > rcmd.axisValue.size())
     {
         std::cout << "Error, more scale factors than axes defined : Nr axes " << rcmd.axisValue.size() << " size of axis scales " << axisScales.size() << std::endl;
         exception();
     }
-    
+
     RawCommand rscaled = rcmd;
     for(size_t i = 0 ; i < axisScales.size(); i++)
     {
         rscaled.axisValue[i] *= axisScales[i];
     }
-    
+
     _raw_command.write(rscaled);
-    
+
     for(size_t i = 0 ; i < axisHandles.size(); i++)
     {
         const AxisPortHandle &handle(axisHandles[i]);

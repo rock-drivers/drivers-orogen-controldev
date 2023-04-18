@@ -8,12 +8,12 @@
 namespace controldev {
     class GenericTask : public GenericTaskBase
     {
-    friend class GenericTaskBase;
+        friend class GenericTaskBase;
     protected:
         virtual bool updateRawCommand(RawCommand& rcmd) = 0;
 
         virtual int getFileDescriptor() = 0;
-    
+
         class AxisPortHandle
         {
         public:
