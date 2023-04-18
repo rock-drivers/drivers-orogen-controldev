@@ -13,14 +13,20 @@ namespace controldev {
 	friend class JoystickTaskBase;
     protected:
         Joystick *joystick;
+        bool device_connected_;
 
-        virtual bool updateRawCommand(RawCommand& rcmd);
-        virtual int getFileDescriptor();
+        virtual int getFileDescriptor() override;
+        virtual bool updateRawCommand(RawCommand& rcmd) override;
+        void connectDevice(bool recover = false);
+        bool recoverConnection();
+        void writeCommand();
+        bool checkAxisValues(const RawCommand& rcmd);
+
     public:
         JoystickTask(std::string const& name = "controldev::JoystickTask");
         JoystickTask(std::string const& name, RTT::ExecutionEngine* engine);
 
-	~JoystickTask();
+        ~JoystickTask();
 
         /** This hook is called by Orocos when the state machine transitions
          * from PreOperational to Stopped. If it returns false, then the
