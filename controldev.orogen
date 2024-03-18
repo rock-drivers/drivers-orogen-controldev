@@ -84,3 +84,12 @@ task_context "Remote", subclasses: 'GenericTask' do
     port_driven
 end
 
+# This task aggregates multiple raw command stream sources and outputs a single
+# time-ordered stream
+task_context "RawCommandAggregator" do
+    input_port("command_in", "controldev/RawCommand").multiplexes
+
+    output_port "command_out", "controldev/RawCommand"
+
+    port_driven
+end

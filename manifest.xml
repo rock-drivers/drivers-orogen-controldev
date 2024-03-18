@@ -15,5 +15,7 @@
   <depend package="base/orogen/types"/>
   <depend package="tools/logger"/>
   <depend package="orogen"/>
+
+  <test_depend name="tools/syskit" />
   <!--tags>stable</tags-->
 </package>
