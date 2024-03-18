@@ -74,6 +74,42 @@ task_context "GenericRawToMotion2D" do
     port_driven :raw_command
 end
 
+# This task converts controldev/RawCommand to base/Twist
+# with configurable axes, ranges and deadzones
+task_context "GenericRawToTwist" do
+    property("linear_x_axis", "int").doc("Axis index of RawCommand to set x component of the linear part, -1 means ignore, will be set to 0")
+    property("linear_y_axis", "int").doc("Axis index of RawCommand to set y component of the linear part, -1 means ignore, will be set to 0")
+    property("linear_z_axis", "int").doc("Axis index of RawCommand to set z component of the linear part, -1 means ignore, will be set to 0")
+    property("angular_x_axis", "int").doc("Axis index of RawCommand to set x component of the angular part, -1 means ignore, will be set to 0")
+    property("angular_y_axis", "int").doc("Axis index of RawCommand to set y component of the angular part, -1 means ignore, will be set to 0")
+    property("angular_z_axis", "int").doc("Axis index of RawCommand to set z component of the angular part, -1 means ignore, will be set to 0")
+
+    property("invert_linear_x_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_linear_y_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_linear_z_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_angular_x_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_angular_y_axis", "bool", 0).doc("Invert Axis, default false")
+    property("invert_angular_z_axis", "bool", 0).doc("Invert Axis, default false")
+
+    property("max_linear_x_axis", "double", 1.0).doc("Maximum speed in m/s")
+    property("max_linear_y_axis", "double", 1.0).doc("Maximum speed in m/s")
+    property("max_linear_z_axis", "double", 1.0).doc("Maximum speed in m/s")
+    property("max_angular_x_axis", "double", 1.0).doc("Maximum speed in m/s")
+    property("max_angular_y_axis", "double", 1.0).doc("Maximum speed in m/s")
+    property("max_angular_z_axis", "double", 1.0).doc("Maximum speed in m/s")
+
+    property("linear_x_axis_deadzone", "double", 0.02).doc("linear axis X deadzone (range 0-1)")
+    property("linear_y_axis_deadzone", "double", 0.02).doc("linear axis Y deadzone (range 0-1)")
+    property("linear_z_axis_deadzone", "double", 0.02).doc("linear axis Z deadzone (range 0-1)")
+    property("angular_x_axis_deadzone", "double", 0.02).doc("angular axis X deadzone (range 0-1)")
+    property("angular_y_axis_deadzone", "double", 0.02).doc("angular axis Y deadzone (range 0-1)")
+    property("angular_z_axis_deadzone", "double", 0.02).doc("angular axis Z deadzone (range 0-1)")
+
+    input_port "raw_command", "controldev/RawCommand"
+    output_port "motion_command", "base/Twist"
+
+    port_driven :raw_command
+end
 
 # A Task that receives CAN messages and converts them into raw-commands
 task_context "Remote", subclasses: 'GenericTask' do
